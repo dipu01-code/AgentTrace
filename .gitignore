@@ -1,0 +1,15 @@
+# Expo / React Native
+node_modules/
+.expo/
+dist/
+build/
+ios/Pods/
+.android/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
