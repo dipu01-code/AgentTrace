@@ -3,7 +3,7 @@
 | # | Phase | Status |
 |---|-------|--------|
 | 1 | Expo + TypeScript scaffolding | ✅ Complete |
-| 2 | React Navigation setup | ⏳ Pending |
+| 2 | React Navigation setup | ✅ Complete |
 | 3 | Zustand state store | ⏳ Pending |
 | 4 | Backend API skeleton (FastAPI) | ⏳ Pending |
 | 5 | Database models (runs, agents, events) | ⏳ Pending |
