@@ -3,6 +3,8 @@ uvicorn==0.30.0
 pydantic==2.7.0
 pydantic-settings==2.3.0
 python-dotenv==1.0.0
+motor==3.7.1
+pymongo==4.19.0
 sqlalchemy==2.0.29
 alembic==1.13.0
 psycopg2-binary==2.9.9

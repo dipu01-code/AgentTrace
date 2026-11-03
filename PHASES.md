@@ -6,7 +6,7 @@
 | 2 | React Navigation setup | ✅ Complete |
 | 3 | Zustand state store | ✅ Complete |
 | 4 | Backend API skeleton (FastAPI) | ✅ Complete |
-| 5 | Database models (runs, agents, events) | ⏳ Pending |
+| 5 | Database models (MongoDB: runs, agents, events) | ✅ Complete |
 | 6 | Workflow run ingestion endpoint | ⏳ Pending |
 | 7 | Agent event schema & validation | ⏳ Pending |
 | 8 | Timeline list view | ⏳ Pending |
