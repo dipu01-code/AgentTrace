@@ -7,6 +7,7 @@ export type RootStackParamList = {
   EventDetail: { runId: string; eventId: string };
   GraphView: { runId: string };
   ReplayView: { runId: string };
+  LoopDetector: { runId: string };
 };
 
 export type DashboardScreenProps = NativeStackScreenProps<
@@ -32,4 +33,8 @@ export type GraphViewScreenProps = NativeStackScreenProps<
 export type ReplayViewScreenProps = NativeStackScreenProps<
   RootStackParamList,
   'ReplayView'
+>;
+export type LoopDetectorScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  'LoopDetector'
 >;

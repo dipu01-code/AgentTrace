@@ -12,7 +12,7 @@
 | 8 | Timeline list view | ✅ Complete |
 | 9 | Workflow graph visualization (React Native SVG) | ✅ Complete |
 | 10 | Animation UI layer (Reanimated + Gesture Handler) | ✅ Complete |
-| 11 | Infinite loop detector UI | ⏳ Pending |
+| 11 | Infinite loop detector UI | ✅ Complete |
 | 12 | State diff viewer | ⏳ Pending |
 | 13 | Replay scrubber / timeline slider | ⏳ Pending |
 | 14 | Determinism checker (hash-based run comparison) | ⏳ Pending |
