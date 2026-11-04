@@ -2,7 +2,9 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
-    "lib": ["esnext"],
+    "lib": [
+      "esnext"
+    ],
     "allowJs": true,
     "checkJs": true,
     "strict": true,
@@ -17,5 +19,10 @@
     "noUnusedParameters": true,
     "jsx": "react-native"
   },
-  "exclude": ["node_modules", "babel.config.js", "metro.config.js"]
+  "exclude": [
+    "node_modules",
+    "babel.config.js",
+    "metro.config.js"
+  ],
+  "extends": "expo/tsconfig.base"
 }
