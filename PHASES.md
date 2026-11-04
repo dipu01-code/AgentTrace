@@ -8,7 +8,7 @@
 | 4 | Backend API skeleton (FastAPI) | ✅ Complete |
 | 5 | Database models (MongoDB: runs, agents, events) | ✅ Complete |
 | 6 | Workflow run ingestion endpoint | ✅ Complete |
-| 7 | Agent event schema & validation | ⏳ Pending |
+| 7 | Agent event schema & validation | ✅ Complete |
 | 8 | Timeline list view | ⏳ Pending |
 | 9 | Workflow graph visualization (React Native SVG) | ⏳ Pending |
 | 10 | Animation UI layer (Reanimated + Gesture Handler) | ⏳ Pending |
