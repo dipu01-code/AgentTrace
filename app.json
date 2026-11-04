@@ -1,0 +1,8 @@
+{
+  "expo": {
+    "name": "AgentTrace",
+    "slug": "agenttrace",
+    "version": "1.0.0",
+    "plugins": ["react-native-reanimated/plugin"]
+  }
+}
