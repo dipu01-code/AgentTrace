@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { DashboardScreen } from '../screens/DashboardScreen';
+import { TimelineScreen } from '../screens/TimelineScreen';
 import { RunDetailScreen } from '../screens/RunDetailScreen';
 import { EventDetailScreen } from '../screens/EventDetailScreen';
 import { GraphViewScreen } from '../screens/GraphViewScreen';
@@ -12,12 +13,18 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export function AppNavigator() {
   return (
     <Stack.Navigator
+      initialRouteName="Timeline"
       screenOptions={{
         headerStyle: { backgroundColor: '#111827' },
         headerTintColor: '#ffffff',
         headerTitleStyle: { fontWeight: '600' },
       }}
     >
+      <Stack.Screen
+        name="Timeline"
+        component={TimelineScreen}
+        options={{ title: 'Timeline' }}
+      />
       <Stack.Screen
         name="Dashboard"
         component={DashboardScreen}

@@ -1,6 +1,7 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 export type RootStackParamList = {
+  Timeline: undefined;
   Dashboard: undefined;
   RunDetail: { runId: string };
   EventDetail: { runId: string; eventId: string };
@@ -11,6 +12,10 @@ export type RootStackParamList = {
 export type DashboardScreenProps = NativeStackScreenProps<
   RootStackParamList,
   'Dashboard'
+>;
+export type TimelineScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  'Timeline'
 >;
 export type RunDetailScreenProps = NativeStackScreenProps<
   RootStackParamList,
