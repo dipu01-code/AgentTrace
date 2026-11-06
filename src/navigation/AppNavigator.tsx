@@ -7,6 +7,7 @@ import { EventDetailScreen } from '../screens/EventDetailScreen';
 import { GraphViewScreen } from '../screens/GraphViewScreen';
 import { ReplayViewScreen } from '../screens/ReplayViewScreen';
 import { LoopDetectorScreen } from '../screens/LoopDetectorScreen';
+import { StateDiffScreen } from '../screens/StateDiffScreen';
 import { RootStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -55,6 +56,11 @@ export function AppNavigator() {
         name="LoopDetector"
         component={LoopDetectorScreen}
         options={{ title: 'Loop Detector' }}
+      />
+      <Stack.Screen
+        name="StateDiff"
+        component={StateDiffScreen}
+        options={{ title: 'State Diffs' }}
       />
     </Stack.Navigator>
   );

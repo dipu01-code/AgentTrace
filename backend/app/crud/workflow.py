@@ -122,3 +122,17 @@ async def save_state_diff(run_id: str, diffs: List[StateDiff]):
         "diffs": [d.model_dump() for d in diffs],
         "created_at": datetime.utcnow(),
     })
+
+
+async def get_state_diffs_for_run(run_id: str) -> List[Dict[str, Any]]:
+    db = get_database()
+    cursor = db.state_diffs.find({"run_id": run_id}).sort("created_at", -1)
+    diffs = []
+    async for doc in cursor:
+        diffs.append({
+            "id": str(doc["_id"]),
+            "run_id": doc["run_id"],
+            "diffs": doc["diffs"],
+            "created_at": doc["created_at"].isoformat() if hasattr(doc["created_at"], "isoformat") else str(doc["created_at"]),
+        })
+    return diffs

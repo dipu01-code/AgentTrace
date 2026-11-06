@@ -102,4 +102,47 @@ export const api = {
     const data = await res.json();
     return mapEventFromApi(data);
   },
+
+  async getStateDiffs(runId: string): Promise<StateDiffEntry[]> {
+    const res = await fetch(`${API_BASE_URL}/api/v1/runs/${runId}/diffs`);
+    if (!res.ok) throw new Error(`Failed to fetch state diffs: ${res.status}`);
+    const data = await res.json();
+    return data.map((entry: any) => ({
+      id: entry.id,
+      runId: entry.run_id,
+      createdAt: new Date(entry.created_at).getTime(),
+      diffs: entry.diffs.map((d: any) => ({
+        path: d.path,
+        before: d.before,
+        after: d.after,
+      })),
+    }));
+  },
+
+  async saveStateDiffs(runId: string, diffs: StateDiffInput[]): Promise<{ saved: number; run_id: string }> {
+    const res = await fetch(`${API_BASE_URL}/api/v1/runs/${runId}/diffs`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(diffs.map(d => ({
+        path: d.path,
+        before: d.before,
+        after: d.after,
+      }))),
+    });
+    if (!res.ok) throw new Error(`Failed to save state diffs: ${res.status}`);
+    return res.json();
+  },
 };
+
+export interface StateDiffInput {
+  path: string;
+  before: unknown;
+  after: unknown;
+}
+
+export interface StateDiffEntry {
+  id: string;
+  runId: string;
+  createdAt: number;
+  diffs: StateDiffInput[];
+}

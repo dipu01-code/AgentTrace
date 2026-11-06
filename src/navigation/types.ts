@@ -8,6 +8,7 @@ export type RootStackParamList = {
   GraphView: { runId: string };
   ReplayView: { runId: string };
   LoopDetector: { runId: string };
+  StateDiff: { runId: string };
 };
 
 export type DashboardScreenProps = NativeStackScreenProps<
@@ -37,4 +38,8 @@ export type ReplayViewScreenProps = NativeStackScreenProps<
 export type LoopDetectorScreenProps = NativeStackScreenProps<
   RootStackParamList,
   'LoopDetector'
+>;
+export type StateDiffScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  'StateDiff'
 >;
