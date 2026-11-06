@@ -14,7 +14,7 @@
 | 10 | Animation UI layer (Reanimated + Gesture Handler) | ✅ Complete |
 | 11 | Infinite loop detector UI | ✅ Complete |
 | 12 | State diff viewer | ✅ Complete |
-| 13 | Replay scrubber / timeline slider | ⏳ Pending |
+| 13 | Replay scrubber / timeline slider | ✅ Complete |
 | 14 | Determinism checker (hash-based run comparison) | ⏳ Pending |
 | 15 | Regression test runner UI | ⏳ Pending |
 | 16 | Code bloat analyzer | ⏳ Pending |

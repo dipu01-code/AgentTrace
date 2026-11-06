@@ -132,6 +132,25 @@ export const api = {
     if (!res.ok) throw new Error(`Failed to save state diffs: ${res.status}`);
     return res.json();
   },
+
+  async getReplayEvents(runId: string): Promise<ReplayEvent[]> {
+    const res = await fetch(`${API_BASE_URL}/api/v1/runs/${runId}/replay`);
+    if (!res.ok) throw new Error(`Failed to fetch replay events: ${res.status}`);
+    const data = await res.json();
+    return data.map((e: any) => ({
+      id: e.id,
+      runId: e.run_id,
+      agentId: e.agent_id,
+      agentName: e.agent_name,
+      type: e.type,
+      timestamp: e.timestamp,
+      elapsedMs: e.elapsed_ms,
+      latencyMs: e.latency_ms,
+      payload: e.payload ?? {},
+      parentId: e.parent_id,
+      createdAt: new Date(e.created_at).getTime(),
+    }));
+  },
 };
 
 export interface StateDiffInput {
@@ -145,4 +164,18 @@ export interface StateDiffEntry {
   runId: string;
   createdAt: number;
   diffs: StateDiffInput[];
+}
+
+export interface ReplayEvent {
+  id: string;
+  runId: string;
+  agentId: string;
+  agentName: string;
+  type: string;
+  timestamp: number;
+  elapsedMs: number;
+  latencyMs?: number;
+  payload: Record<string, unknown>;
+  parentId?: string;
+  createdAt: number;
 }
