@@ -8,6 +8,7 @@ import { GraphViewScreen } from '../screens/GraphViewScreen';
 import { ReplayViewScreen } from '../screens/ReplayViewScreen';
 import { LoopDetectorScreen } from '../screens/LoopDetectorScreen';
 import { StateDiffScreen } from '../screens/StateDiffScreen';
+import { DeterminismScreen } from '../screens/DeterminismScreen';
 import { RootStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -61,6 +62,11 @@ export function AppNavigator() {
         name="StateDiff"
         component={StateDiffScreen}
         options={{ title: 'State Diffs' }}
+      />
+      <Stack.Screen
+        name="Determinism"
+        component={DeterminismScreen}
+        options={{ title: 'Determinism Check' }}
       />
     </Stack.Navigator>
   );

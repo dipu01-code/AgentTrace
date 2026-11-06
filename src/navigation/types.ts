@@ -9,6 +9,7 @@ export type RootStackParamList = {
   ReplayView: { runId: string };
   LoopDetector: { runId: string };
   StateDiff: { runId: string };
+  Determinism: { runIdA: string; runIdB: string };
 };
 
 export type DashboardScreenProps = NativeStackScreenProps<
@@ -42,4 +43,8 @@ export type LoopDetectorScreenProps = NativeStackScreenProps<
 export type StateDiffScreenProps = NativeStackScreenProps<
   RootStackParamList,
   'StateDiff'
+>;
+export type DeterminismScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  'Determinism'
 >;

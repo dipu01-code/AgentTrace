@@ -151,6 +151,12 @@ export const api = {
       createdAt: new Date(e.created_at).getTime(),
     }));
   },
+
+  async compareRuns(runIdA: string, runIdB: string): Promise<DeterminismResult> {
+    const res = await fetch(`${API_BASE_URL}/api/v1/runs/${runIdA}/compare/${runIdB}`);
+    if (!res.ok) throw new Error(`Failed to compare runs: ${res.status}`);
+    return res.json();
+  },
 };
 
 export interface StateDiffInput {
@@ -178,4 +184,23 @@ export interface ReplayEvent {
   payload: Record<string, unknown>;
   parentId?: string;
   createdAt: number;
+}
+
+export interface DeterminismResult {
+  run_id_a: string;
+  run_id_b: string;
+  deterministic: boolean;
+  hash_a: string;
+  hash_b: string;
+  event_count_a: number;
+  event_count_b: number;
+  first_divergence_index: number | null;
+  difference_count: number;
+  differing_events: Array<{
+    index: number;
+    run_a_event?: { type: string; agent_name: string; timestamp: number };
+    run_b_event?: { type: string; agent_name: string; timestamp: number };
+    extra_in?: string;
+    event?: { type: string; agent_name: string; timestamp: number };
+  }>;
 }
