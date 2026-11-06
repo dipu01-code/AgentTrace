@@ -1,23 +1,46 @@
-# AgentTrace
+# 🕸️ AgentTrace
 
-Multi-agent AI workflow debugger and observability tool for React Native + Expo mobile apps. Trace, debug, and replay non-deterministic agent workflows with loop detection, state diffs, replay scrubbing, and determinism checking.
+**Multi-agent AI workflow debugger & observability tool for React Native + Expo.** Trace, debug, and replay non-deterministic agent workflows with loop detection, state diffs, replay scrubbing, and determinism checking.
 
-## What it solves
-
-Multi-agent AI workflows are non-deterministic, stateful, and prone to costly infinite loops and code bloat, making debugging, reproducibility, and regression testing nearly impossible with traditional developer tools. AgentTrace gives you a mobile observability layer to:
-
-- Visualize agent interaction graphs
-- Detect infinite loops in real time
-- Diff state changes across events
-- Replay workflow traces with a scrubbable timeline
-- Compare runs for determinism/regression testing
-- Export and share debug sessions
+[![GitHub stars](https://img.shields.io/github/stars/dipu01-code/AgentTrace?style=social)](https://github.com/dipu01-code/AgentTrace/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/dipu01-code/AgentTrace?style=social)](https://github.com/dipu01-code/AgentTrace/network/members)
+[![GitHub issues](https://img.shields.io/github/issues/dipu01-code/AgentTrace)](https://github.com/dipu01-code/AgentTrace/issues)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/dipu01-code/AgentTrace)](https://github.com/dipu01-code/AgentTrace/pulls)
+[![GitHub license](https://img.shields.io/github/license/dipu01-code/AgentTrace)](LICENSE)
+[![React Native 0.88.1](https://img.shields.io/badge/React_Native-0.88.1-61DAFB?logo=react)](https://reactnative.dev/)
+[![Expo SDK 58](https://img.shields.io/badge/Expo_SDK-58-000020?logo=expo)](https://expo.dev/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
+[![Python 3.14](https://img.shields.io/badge/Python-3.14-3776AB?logo=python)](https://python.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-7.0-4EA94B?logo=mongodb)](https://www.mongodb.com/)
+[![MIT License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
 
-## Tech Stack
+## 📊 Project Snapshot
 
-### Frontend (Mobile)
+![AgentTrace GitHub stats](https://github-readme-stats.vercel.app/api?username=dipu01-code&repo=AgentTrace&show_icons=true&title_color=2ecc71&text_color=1f1f1f&bg_color=ffffff&hide_border=true)
+
+![Top languages](https://github-readme-stats.vercel.app/api/top-langs/?username=dipu01-code&repo=AgentTrace&layout=compact&title_color=2ecc71&text_color=1f1f1f&bg_color=ffffff&hide_border=true)
+
+![Contribution graph](https://github-readme-activity-graph.vercel.app/graph?username=dipu01-code&theme=github-dark&hide_border=true)
+
+---
+
+## 🎯 What it solves
+
+Multi-agent AI workflows are non-deterministic, stateful, and prone to costly infinite loops and code bloat, making debugging, reproducibility, and regression testing nearly impossible with traditional developer tools. AgentTrace gives you a mobile observability layer to:
+
+- 🔍 **Visualize agent interaction graphs** — SVG workflow graph, color-coded by event type
+- 🔄 **Detect infinite loops in real time** — loop count badge + chain visualization
+- 🧮 **Diff state changes across events** — before/after state inspection
+- ⏮️ **Replay workflow traces** — scrubbable timeline slider + playback controls
+- ⚖️ **Compare runs for determinism / regression testing** — side-by-side run diffs
+- 📤 **Export and share debug sessions** — JSON trace export
+
+---
+
+## 🧩 Tech Stack
+
 | Layer | Technology | Version |
 |-------|-----------|---------|
 | Framework | React Native | 0.88.1 |
@@ -25,30 +48,22 @@ Multi-agent AI workflows are non-deterministic, stateful, and prone to costly in
 | Language | TypeScript | ~6.0.3 |
 | React | React | 19.3.0 |
 | Navigation | React Navigation (native-stack) | ^7.0.0 |
-| State management | Zustand | ^4.5.0 |
+| State | Zustand | ^4.5.0 |
 | Animations | Reanimated + Gesture Handler | ^4.0.0 / ~3.3.0 |
 | Graph rendering | React Native SVG | ^15.0.0 |
 | Icons | lucide-react-native | ^1.0.0 |
-
-### Backend (API)
-| Layer | Technology | Version |
-|-------|-----------|---------|
-| Framework | FastAPI | ^0.115.0 |
-| Language | Python | 3.14 |
+| Backend framework | FastAPI | ^0.115.0 |
+| Backend language | Python | 3.14 |
 | Database | MongoDB (Motor async driver) | pymongo 4.19 / motor 3.7.1 |
 | Config | Pydantic Settings | ^2.3.0 |
 | ASGI server | Uvicorn | ^0.30.0 |
-| API validation | Pydantic v2 | ^2.7.0 |
-
-### Dev / CI
-- EAS Build (Expo Application Services)
-- Detox (E2E testing)
-- Jest (unit tests)
-- ESLint / Prettier
 
 ---
 
-## Project Structure
+## 📁 Project Structure
+
+<details>
+<summary>📂 Click to expand the full file tree</summary>
 
 ```
 AgentTrace/
@@ -94,9 +109,11 @@ AgentTrace/
     └── types/index.ts           # Shared TypeScript types
 ```
 
+</details>
+
 ---
 
-## Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
 
@@ -105,27 +122,20 @@ AgentTrace/
 - **MongoDB** running locally at `mongodb://localhost:27017` (or update `MONGODB_URL` in `backend/.env`)
 - **Expo Go** app on your phone (iOS App Store / Google Play), or iOS Simulator / Android Emulator
 
-### 1. Clone the repository
+### 1️⃣ Clone the repository
 
 ```bash
 git clone https://github.com/dipu01-code/AgentTrace.git
 cd AgentTrace
 ```
 
-### 2. Start the backend (FastAPI + MongoDB)
+### 2️⃣ Start the backend (FastAPI + MongoDB)
 
 ```bash
 cd backend
-
-# Create a virtual environment (recommended)
 python -m venv .venv
-source .venv/bin/activate   # macOS/Linux
-# .venv\Scripts\activate    # Windows
-
-# Install dependencies
+source .venv/bin/activate   # macOS/Linux   |   .venv\Scripts\activate   # Windows
 pip install -r requirements.txt
-
-# Start the server
 python -m uvicorn app.main:app --reload --port 8000
 ```
 
@@ -135,21 +145,14 @@ The API will be available at `http://localhost:8000`:
 - `GET /api/v1/runs/{run_id}` — get a run by ID
 - `POST /api/v1/runs/{run_id}/events` — ingest an agent event
 - `GET /api/v1/runs/{run_id}/events` — list events for a run
-- `POST /api/v1/runs/{run_id}/events/batch` — bulk ingest events
 - `POST /api/v1/validate/` — validate an event schema
-- `POST /api/v1/validate/batch` — validate multiple events
-- `POST /api/v1/validate/runs/{run_id}/events/validated` — validate + persist
 - `GET /docs` — interactive Swagger UI
 
-### 3. Start the frontend (Expo)
+### 3️⃣ Start the frontend (Expo)
 
 ```bash
-cd /Users/dipu/AgentTrace   # (repo root)
-
-# Install dependencies
+cd /Users/dipu/AgentTrace   # repo root
 npm install
-
-# Start Expo dev server
 npx expo start
 ```
 
@@ -162,20 +165,16 @@ The frontend connects to `http://localhost:8000` (iOS simulator) or `http://10.0
 
 ---
 
-## How to Use
+## 📖 How to Use
 
 ### 1. Create a workflow run
 On the Timeline screen, tap the `+` FAB button. A new run is created via `POST /api/v1/runs/` and appears in the list.
 
 ### 2. View the timeline
-The Timeline screen lists all workflow runs with:
-- Run name and status (running / completed / failed / looping)
-- Total event count
-- Loop count (red badge if loops detected)
-- Animated entrance (fade + slide, staggered by index)
+The Timeline screen lists all workflow runs with run name/status, total event count, loop-count badge (red if loops detected), and animated entrance (fade + slide, staggered by index).
 
 ### 3. View the workflow graph
-Tap any run to open the Graph view. It renders agent events as colored nodes connected by dashed edges, color-coded by event type:
+Tap any run to open Graph view — agent events rendered as colored nodes connected by dashed edges:
 - `agent_start` / `agent_end` — blue / green
 - `tool_call` / `tool_result` — purple / cyan
 - `llm_call` / `llm_result` — orange / red
@@ -183,13 +182,9 @@ Tap any run to open the Graph view. It renders agent events as colored nodes con
 - `loop_detected` / `error` — red
 
 ### 4. Detect infinite loops
-The Loop Detector screen filters events for `loop_detected` type and shows:
-- Loop count stat card
-- List of loop events with agent, type, timestamp, and payload preview
-- Loop chain visualization (ordered chain of agents in the loop)
+Loop Detector screen filters `loop_detected` events and shows loop-count stat card, loop-event list, and loop-chain visualization.
 
 ### 5. Ingest agent events
-Send agent events to the backend from your multi-agent workflow:
 
 ```json
 POST /api/v1/runs/{run_id}/events
@@ -207,11 +202,26 @@ POST /api/v1/runs/{run_id}/events
 Use `POST /api/v1/validate/` to validate an event schema before persisting.
 
 ### 6. Replay a run
-The Replay view (Phase 13) provides a scrubbable timeline slider and playback controls to step through events chronologically.
+The Replay view provides a scrubbable timeline slider and playback controls to step through events chronologically.
 
 ---
 
-## Environment Variables
+## 🖼️ Screenshots
+
+<details>
+<summary>📸 Click to expand screenshots</summary>
+
+| Timeline | Graph view | Replay scrubber | Loop detector |
+|----------|-----------|-----------------|---------------|
+| ![Timeline](docs/screenshots/timeline.png) | ![Graph](docs/screenshots/graph.png) | ![Replay](docs/screenshots/replay.png) | ![Loops](docs/screenshots/loops.png) |
+
+_Add screenshots under `docs/screenshots/` and update the links above._
+
+</details>
+
+---
+
+## ⚙️ Environment Variables
 
 Create `backend/.env`:
 
@@ -227,7 +237,7 @@ CORS_ORIGINS=["*"]
 
 ---
 
-## Build & Deploy
+## 🛠️ Build & Deploy
 
 ### EAS Build (Expo)
 
@@ -243,40 +253,40 @@ npx eas-cli@latest submit --platform all
 
 ---
 
-## Development Phases
+## 🗓️ Development Phases (24-phase plan)
 
-The project is built in 24 phases. Current status (see `PHASES.md` for details):
+Current status — check the boxes below as you complete each phase:
 
-| Phase | Feature | Status |
-|-------|---------|--------|
-| 1 | Expo + TypeScript scaffolding | ✅ Complete |
-| 2 | React Navigation setup | ✅ Complete |
-| 3 | Zustand state store | ✅ Complete |
-| 4 | FastAPI backend skeleton | ✅ Complete |
-| 5 | MongoDB database models | ✅ Complete |
-| 6 | Workflow run ingestion endpoint | ✅ Complete |
-| 7 | Agent event schema & validation | ✅ Complete |
-| 8 | Timeline list view | ✅ Complete |
-| 9 | Workflow graph visualization (SVG) | ✅ Complete |
-| 10 | Animation UI layer (Reanimated + Gesture Handler) | ✅ Complete |
-| 11 | Infinite loop detector UI | ✅ Complete |
-| 12 | State diff viewer | ⏳ Pending |
-| 13 | Replay scrubber / timeline slider | ⏳ Pending |
-| 14 | Determinism checker | ⏳ Pending |
-| 15 | Regression test runner UI | ⏳ Pending |
-| 16 | Code bloat analyzer | ⏳ Pending |
-| 17 | Export / share debug sessions | ⏳ Pending |
-| 18 | Auth (login/signup) | ⏳ Pending |
-| 19 | Cloud sync | ⏳ Pending |
-| 20 | Push notifications | ⏳ Pending |
-| 21 | Dark mode + theming | ⏳ Pending |
-| 22 | Performance optimization | ⏳ Pending |
-| 23 | E2E tests (Detox) | ⏳ Pending |
-| 24 | EAS build & deployment | ⏳ Pending |
+- [x] 1 | Expo + TypeScript scaffolding
+- [x] 2 | React Navigation setup
+- [x] 3 | Zustand state store
+- [x] 4 | FastAPI backend skeleton
+- [x] 5 | MongoDB database models
+- [x] 6 | Workflow run ingestion endpoint
+- [x] 7 | Agent event schema & validation
+- [x] 8 | Timeline list view
+- [x] 9 | Workflow graph visualization (SVG)
+- [x] 10 | Animation UI layer (Reanimated + Gesture Handler)
+- [x] 11 | Infinite loop detector UI
+- [ ] 12 | State diff viewer
+- [ ] 13 | Replay scrubber / timeline slider
+- [ ] 14 | Determinism checker
+- [ ] 15 | Regression test runner UI
+- [ ] 16 | Code bloat analyzer
+- [ ] 17 | Export / share debug sessions
+- [ ] 18 | Auth (login/signup)
+- [ ] 19 | Cloud sync
+- [ ] 20 | Push notifications
+- [ ] 21 | Dark mode + theming
+- [ ] 22 | Performance optimization
+- [ ] 23 | E2E tests (Detox)
+- [ ] 24 | EAS build & deployment
+
+Full details: [`PHASES.md`](PHASES.md)
 
 ---
 
-## Contributing
+## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/your-feature`)
@@ -286,10 +296,15 @@ The project is built in 24 phases. Current status (see `PHASES.md` for details):
 
 ---
 
-## License
+## 📄 License
 
-MIT
+[MIT](LICENSE)
 
 ---
 
-**Repository:** https://github.com/dipu01-code/AgentTrace
+## 🙌 Support
+
+If you find AgentTrace useful, please ⭐ star the repo and share it with your team.
+
+**Repository:** https://github.com/dipu01-code/AgentTrace  
+**Maintainer:** [dipu01-code](https://github.com/dipu01-code)
