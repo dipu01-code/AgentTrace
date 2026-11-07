@@ -22,7 +22,8 @@ export function AppNavigator() {
   const { isAuthenticated } = useWorkflowStore();
 
   return (
-    <Stack.Navigator
+    <NavigationContainer>
+      <Stack.Navigator
       initialRouteName={isAuthenticated ? 'Timeline' : 'Login'}
       screenOptions={{
         headerStyle: { backgroundColor: '#111827' },
@@ -107,14 +108,11 @@ export function AppNavigator() {
           />
         </>
       )}
-    </Stack.Navigator>
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
 export default function App() {
-  return (
-    <NavigationContainer>
-      <AppNavigator />
-    </NavigationContainer>
-  );
+  return <AppNavigator />;
 }
