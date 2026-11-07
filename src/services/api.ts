@@ -173,6 +173,12 @@ export const api = {
     if (!res.ok) throw new Error(`Failed to list regression tests: ${res.status}`);
     return res.json();
   },
+
+  async analyzeBloat(runId: string): Promise<BloatAnalysis> {
+    const res = await fetch(`${API_BASE_URL}/api/v1/runs/${runId}/bloat`);
+    if (!res.ok) throw new Error(`Failed to analyze bloat: ${res.status}`);
+    return res.json();
+  },
 };
 
 export interface StateDiffInput {
@@ -239,4 +245,26 @@ export interface RegressionTestResult {
   comparison_hash: string;
   difference_count: number;
   created_at: string;
+}
+
+export interface BloatPattern {
+  type: string;
+  agent_id: string;
+  event_type: string;
+  count: number;
+  excess: number;
+  description: string;
+}
+
+export interface BloatAnalysis {
+  run_id: string;
+  bloat_score: number;
+  total_events: number;
+  repetitive_calls: number;
+  redundant_state_changes: number;
+  rapid_llm_calls: number;
+  condensable_sequences: number;
+  patterns: BloatPattern[];
+  suggestions: string[];
+  component_breakdown: Record<string, number>;
 }

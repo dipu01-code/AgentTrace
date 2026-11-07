@@ -17,7 +17,7 @@
 | 13 | Replay scrubber / timeline slider | ✅ Complete |
 | 14 | Determinism checker (hash-based run comparison) | ✅ Complete |
 | 15 | Regression test runner UI | ✅ Complete |
-| 16 | Code bloat analyzer | ⏳ Pending |
+| 16 | Code bloat analyzer | ✅ Complete |
 | 17 | Export / share debug sessions | ⏳ Pending |
 | 18 | Auth (login/signup) | ⏳ Pending |
 | 19 | Cloud sync | ⏳ Pending |

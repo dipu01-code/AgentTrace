@@ -10,6 +10,7 @@ import { LoopDetectorScreen } from '../screens/LoopDetectorScreen';
 import { StateDiffScreen } from '../screens/StateDiffScreen';
 import { DeterminismScreen } from '../screens/DeterminismScreen';
 import { RegressionScreen } from '../screens/RegressionScreen';
+import { BloatScreen } from '../screens/BloatScreen';
 import { RootStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -73,6 +74,11 @@ export function AppNavigator() {
         name="Regression"
         component={RegressionScreen}
         options={{ title: 'Regression Tests' }}
+      />
+      <Stack.Screen
+        name="Bloat"
+        component={BloatScreen}
+        options={{ title: 'Code Bloat' }}
       />
     </Stack.Navigator>
   );
