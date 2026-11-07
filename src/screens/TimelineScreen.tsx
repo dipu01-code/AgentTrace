@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, Alert } from 'react-native';
+import { StyleSheet, Text, View, Alert } from 'react-native';
+import SafeAreaView from '../components/SafeAreaView';
 import { api, RunSummary } from '../services/api';
 import { TimelineList } from '../screens/TimelineList';
 

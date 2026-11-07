@@ -4,10 +4,10 @@ import {
   Text,
   View,
   TouchableOpacity,
-  SafeAreaView,
   ActivityIndicator,
   FlatList,
 } from 'react-native';
+import SafeAreaView from '../components/SafeAreaView';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/types';
 import { api, BloatAnalysis } from '../services/api';

@@ -4,7 +4,6 @@ import {
   Text,
   View,
   TouchableOpacity,
-  SafeAreaView,
   ActivityIndicator,
   TextInput,
   Alert,
@@ -12,6 +11,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { api, setAuthToken } from '../services/api';
+import SafeAreaView from '../components/SafeAreaView';
 import { useWorkflowStore } from '../store/useWorkflowStore';
 import { RootStackParamList } from '../navigation/types';
 

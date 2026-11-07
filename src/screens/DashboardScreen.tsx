@@ -1,4 +1,5 @@
-import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import SafeAreaView from '../components/SafeAreaView';
 import { DashboardScreenProps } from '../navigation/types';
 
 export function DashboardScreen({ }: DashboardScreenProps) {

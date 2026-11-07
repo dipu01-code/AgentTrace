@@ -4,11 +4,11 @@ import {
   Text,
   View,
   TouchableOpacity,
-  SafeAreaView,
   ActivityIndicator,
   TextInput,
   Alert,
 } from 'react-native';
+import SafeAreaView from '../components/SafeAreaView';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { api, setAuthToken } from '../services/api';

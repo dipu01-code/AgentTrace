@@ -1,5 +1,6 @@
 import { Svg, Circle, Line, Text as SvgText, G } from 'react-native-svg';
-import { TouchableOpacity, StyleSheet, View, SafeAreaView, ActivityIndicator, Text } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, ActivityIndicator, Text } from 'react-native';
+import SafeAreaView from '../components/SafeAreaView';
 import { useEffect, useState } from 'react';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/types';

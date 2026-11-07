@@ -4,10 +4,10 @@ import {
   Text,
   View,
   TouchableOpacity,
-  SafeAreaView,
   ActivityIndicator,
   FlatList,
 } from 'react-native';
+import SafeAreaView from '../components/SafeAreaView';
 import Animated, {
   useSharedValue,
   withTiming,
