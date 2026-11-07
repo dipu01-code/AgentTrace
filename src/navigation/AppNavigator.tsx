@@ -9,6 +9,7 @@ import { ReplayViewScreen } from '../screens/ReplayViewScreen';
 import { LoopDetectorScreen } from '../screens/LoopDetectorScreen';
 import { StateDiffScreen } from '../screens/StateDiffScreen';
 import { DeterminismScreen } from '../screens/DeterminismScreen';
+import { RegressionScreen } from '../screens/RegressionScreen';
 import { RootStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -67,6 +68,11 @@ export function AppNavigator() {
         name="Determinism"
         component={DeterminismScreen}
         options={{ title: 'Determinism Check' }}
+      />
+      <Stack.Screen
+        name="Regression"
+        component={RegressionScreen}
+        options={{ title: 'Regression Tests' }}
       />
     </Stack.Navigator>
   );

@@ -157,6 +157,22 @@ export const api = {
     if (!res.ok) throw new Error(`Failed to compare runs: ${res.status}`);
     return res.json();
   },
+
+  async runRegressionTest(test: RegressionTestInput): Promise<RegressionTestResult> {
+    const res = await fetch(`${API_BASE_URL}/api/v1/regression/test`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(test),
+    });
+    if (!res.ok) throw new Error(`Failed to run regression test: ${res.status}`);
+    return res.json();
+  },
+
+  async listRegressionTests(): Promise<RegressionTestResult[]> {
+    const res = await fetch(`${API_BASE_URL}/api/v1/regression/tests`);
+    if (!res.ok) throw new Error(`Failed to list regression tests: ${res.status}`);
+    return res.json();
+  },
 };
 
 export interface StateDiffInput {
@@ -203,4 +219,24 @@ export interface DeterminismResult {
     extra_in?: string;
     event?: { type: string; agent_name: string; timestamp: number };
   }>;
+}
+
+export interface RegressionTestInput {
+  name: string;
+  baseline_run_id: string;
+  comparison_run_id: string;
+  description?: string;
+}
+
+export interface RegressionTestResult {
+  id: string;
+  name: string;
+  baseline_run_id: string;
+  comparison_run_id: string;
+  description?: string;
+  passed: boolean;
+  baseline_hash: string;
+  comparison_hash: string;
+  difference_count: number;
+  created_at: string;
 }

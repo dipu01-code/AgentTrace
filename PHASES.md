@@ -16,7 +16,7 @@
 | 12 | State diff viewer | ✅ Complete |
 | 13 | Replay scrubber / timeline slider | ✅ Complete |
 | 14 | Determinism checker (hash-based run comparison) | ✅ Complete |
-| 15 | Regression test runner UI | ⏳ Pending |
+| 15 | Regression test runner UI | ✅ Complete |
 | 16 | Code bloat analyzer | ⏳ Pending |
 | 17 | Export / share debug sessions | ⏳ Pending |
 | 18 | Auth (login/signup) | ⏳ Pending |

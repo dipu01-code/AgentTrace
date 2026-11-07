@@ -10,6 +10,7 @@ export type RootStackParamList = {
   LoopDetector: { runId: string };
   StateDiff: { runId: string };
   Determinism: { runIdA: string; runIdB: string };
+  Regression: undefined;
 };
 
 export type DashboardScreenProps = NativeStackScreenProps<
@@ -47,4 +48,8 @@ export type StateDiffScreenProps = NativeStackScreenProps<
 export type DeterminismScreenProps = NativeStackScreenProps<
   RootStackParamList,
   'Determinism'
+>;
+export type RegressionScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  'Regression'
 >;
