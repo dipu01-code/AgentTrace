@@ -12,6 +12,7 @@ export type RootStackParamList = {
   Determinism: { runIdA: string; runIdB: string };
   Regression: undefined;
   Bloat: { runId: string };
+  Export: { runId: string };
 };
 
 export type DashboardScreenProps = NativeStackScreenProps<
@@ -57,4 +58,8 @@ export type RegressionScreenProps = NativeStackScreenProps<
 export type BloatScreenProps = NativeStackScreenProps<
   RootStackParamList,
   'Bloat'
+>;
+export type ExportScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  'Export'
 >;

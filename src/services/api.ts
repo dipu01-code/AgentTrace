@@ -179,6 +179,28 @@ export const api = {
     if (!res.ok) throw new Error(`Failed to analyze bloat: ${res.status}`);
     return res.json();
   },
+
+  async exportSession(runId: string, includeEvents: boolean, includeDiffs: boolean, description?: string): Promise<{ share_token: string; share_url: string; run_id: string; exported_at: string; total_events: number; total_diffs: number }> {
+    const res = await fetch(`${API_BASE_URL}/api/v1/export/session`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ run_id: runId, include_events: includeEvents, include_diffs: includeDiffs, description }),
+    });
+    if (!res.ok) throw new Error(`Failed to export session: ${res.status}`);
+    return res.json();
+  },
+
+  async getExportedSession(shareToken: string): Promise<any> {
+    const res = await fetch(`${API_BASE_URL}/api/v1/export/session/${shareToken}`);
+    if (!res.ok) throw new Error(`Failed to get exported session: ${res.status}`);
+    return res.json();
+  },
+
+  async listExportedSessions(): Promise<any[]> {
+    const res = await fetch(`${API_BASE_URL}/api/v1/export/sessions`);
+    if (!res.ok) throw new Error(`Failed to list exported sessions: ${res.status}`);
+    return res.json();
+  },
 };
 
 export interface StateDiffInput {

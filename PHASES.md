@@ -18,7 +18,7 @@
 | 14 | Determinism checker (hash-based run comparison) | ✅ Complete |
 | 15 | Regression test runner UI | ✅ Complete |
 | 16 | Code bloat analyzer | ✅ Complete |
-| 17 | Export / share debug sessions | ⏳ Pending |
+| 17 | Export / share debug sessions | ✅ Complete |
 | 18 | Auth (login/signup) | ⏳ Pending |
 | 19 | Cloud sync | ⏳ Pending |
 | 20 | Push notifications for stuck workflows | ⏳ Pending |

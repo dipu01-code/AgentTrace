@@ -11,6 +11,7 @@ import { StateDiffScreen } from '../screens/StateDiffScreen';
 import { DeterminismScreen } from '../screens/DeterminismScreen';
 import { RegressionScreen } from '../screens/RegressionScreen';
 import { BloatScreen } from '../screens/BloatScreen';
+import { ExportScreen } from '../screens/ExportScreen';
 import { RootStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -79,6 +80,11 @@ export function AppNavigator() {
         name="Bloat"
         component={BloatScreen}
         options={{ title: 'Code Bloat' }}
+      />
+      <Stack.Screen
+        name="Export"
+        component={ExportScreen}
+        options={{ title: 'Export / Share' }}
       />
     </Stack.Navigator>
   );
