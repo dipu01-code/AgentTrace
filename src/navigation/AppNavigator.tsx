@@ -1,4 +1,3 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { DashboardScreen } from '../screens/DashboardScreen';
 import { TimelineScreen } from '../screens/TimelineScreen';
@@ -12,80 +11,102 @@ import { DeterminismScreen } from '../screens/DeterminismScreen';
 import { RegressionScreen } from '../screens/RegressionScreen';
 import { BloatScreen } from '../screens/BloatScreen';
 import { ExportScreen } from '../screens/ExportScreen';
-import { RootStackParamList } from './types';
+import { LoginScreen } from '../screens/LoginScreen';
+import { SignupScreen } from '../screens/SignupScreen';
+import { useWorkflowStore } from '../store/useWorkflowStore';
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const Stack: any = require('@react-navigation/native-stack').createNativeStackNavigator();
 
 export function AppNavigator() {
+  const { isAuthenticated } = useWorkflowStore();
+
   return (
     <Stack.Navigator
-      initialRouteName="Timeline"
+      initialRouteName={isAuthenticated ? 'Timeline' : 'Login'}
       screenOptions={{
         headerStyle: { backgroundColor: '#111827' },
         headerTintColor: '#ffffff',
         headerTitleStyle: { fontWeight: '600' },
       }}
     >
-      <Stack.Screen
-        name="Timeline"
-        component={TimelineScreen}
-        options={{ title: 'Timeline' }}
-      />
-      <Stack.Screen
-        name="Dashboard"
-        component={DashboardScreen}
-        options={{ title: 'Workflows' }}
-      />
-      <Stack.Screen
-        name="RunDetail"
-        component={RunDetailScreen}
-        options={{ title: 'Run Details' }}
-      />
-      <Stack.Screen
-        name="EventDetail"
-        component={EventDetailScreen}
-        options={{ title: 'Event' }}
-      />
-      <Stack.Screen
-        name="GraphView"
-        component={GraphViewScreen}
-        options={{ title: 'Workflow Graph' }}
-      />
-      <Stack.Screen
-        name="ReplayView"
-        component={ReplayViewScreen}
-        options={{ title: 'Replay' }}
-      />
-      <Stack.Screen
-        name="LoopDetector"
-        component={LoopDetectorScreen}
-        options={{ title: 'Loop Detector' }}
-      />
-      <Stack.Screen
-        name="StateDiff"
-        component={StateDiffScreen}
-        options={{ title: 'State Diffs' }}
-      />
-      <Stack.Screen
-        name="Determinism"
-        component={DeterminismScreen}
-        options={{ title: 'Determinism Check' }}
-      />
-      <Stack.Screen
-        name="Regression"
-        component={RegressionScreen}
-        options={{ title: 'Regression Tests' }}
-      />
-      <Stack.Screen
-        name="Bloat"
-        component={BloatScreen}
-        options={{ title: 'Code Bloat' }}
-      />
-      <Stack.Screen
-        name="Export"
-        component={ExportScreen}
-        options={{ title: 'Export / Share' }}
-      />
+      {!isAuthenticated ? (
+        <>
+          <Stack.Screen
+            name="Login"
+            component={LoginScreen}
+            options={{ title: 'Sign in' }}
+          />
+          <Stack.Screen
+            name="Signup"
+            component={SignupScreen}
+            options={{ title: 'Create account' }}
+          />
+        </>
+      ) : (
+        <>
+          <Stack.Screen
+            name="Timeline"
+            component={TimelineScreen}
+            options={{ title: 'Timeline' }}
+          />
+          <Stack.Screen
+            name="Dashboard"
+            component={DashboardScreen}
+            options={{ title: 'Workflows' }}
+          />
+          <Stack.Screen
+            name="RunDetail"
+            component={RunDetailScreen}
+            options={{ title: 'Run Details' }}
+          />
+          <Stack.Screen
+            name="EventDetail"
+            component={EventDetailScreen}
+            options={{ title: 'Event' }}
+          />
+          <Stack.Screen
+            name="GraphView"
+            component={GraphViewScreen}
+            options={{ title: 'Workflow Graph' }}
+          />
+          <Stack.Screen
+            name="ReplayView"
+            component={ReplayViewScreen}
+            options={{ title: 'Replay' }}
+          />
+          <Stack.Screen
+            name="LoopDetector"
+            component={LoopDetectorScreen}
+            options={{ title: 'Loop Detector' }}
+          />
+          <Stack.Screen
+            name="StateDiff"
+            component={StateDiffScreen}
+            options={{ title: 'State Diffs' }}
+          />
+          <Stack.Screen
+            name="Determinism"
+            component={DeterminismScreen}
+            options={{ title: 'Determinism Check' }}
+          />
+          <Stack.Screen
+            name="Regression"
+            component={RegressionScreen}
+            options={{ title: 'Regression Tests' }}
+          />
+          <Stack.Screen
+            name="Bloat"
+            component={BloatScreen}
+            options={{ title: 'Code Bloat' }}
+          />
+          <Stack.Screen
+            name="Export"
+            component={ExportScreen}
+            options={{ title: 'Export / Share' }}
+          />
+        </>
+      )}
     </Stack.Navigator>
   );
 }

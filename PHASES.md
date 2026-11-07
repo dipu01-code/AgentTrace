@@ -19,7 +19,7 @@
 | 15 | Regression test runner UI | ✅ Complete |
 | 16 | Code bloat analyzer | ✅ Complete |
 | 17 | Export / share debug sessions | ✅ Complete |
-| 18 | Auth (login/signup) | ⏳ Pending |
+| 18 | Auth (login/signup) | ✅ Complete |
 | 19 | Cloud sync | ⏳ Pending |
 | 20 | Push notifications for stuck workflows | ⏳ Pending |
 | 21 | Dark mode + theming | ⏳ Pending |

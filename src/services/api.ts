@@ -4,6 +4,20 @@ const API_BASE_URL = Platform.OS === 'android'
   ? 'http://10.0.2.2:8000'
   : 'http://localhost:8000';
 
+let authToken: string | null = null;
+
+export const setAuthToken = (token: string | null) => {
+  authToken = token;
+};
+
+export const getAuthToken = (): string | null => authToken;
+
+const headers = (extra: Record<string, string> = {}): Record<string, string> => {
+  const h: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (authToken) h['Authorization'] = `Bearer ${authToken}`;
+  return { ...h, ...extra };
+};
+
 export interface RunSummary {
   id: string;
   name: string;
@@ -44,7 +58,7 @@ const mapEventFromApi = (event: any): AgentEvent => ({
   agentId: event.agent_id,
   agentName: event.agent_name,
   type: event.type,
-  timestamp: event.timestamp * 1000, // convert seconds to ms
+  timestamp: event.timestamp * 1000,
   latencyMs: event.latency_ms,
   payload: event.payload ?? {},
   parentId: event.parent_id,
@@ -52,21 +66,21 @@ const mapEventFromApi = (event: any): AgentEvent => ({
 
 export const api = {
   async getRuns(): Promise<RunSummary[]> {
-    const res = await fetch(`${API_BASE_URL}/api/v1/runs/`);
+    const res = await fetch(`${API_BASE_URL}/api/v1/runs/`, { headers: headers() });
     if (!res.ok) throw new Error(`Failed to fetch runs: ${res.status}`);
     const data = await res.json();
     return data.map(mapRunFromApi);
   },
 
   async getRun(runId: string): Promise<RunSummary> {
-    const res = await fetch(`${API_BASE_URL}/api/v1/runs/${runId}`);
+    const res = await fetch(`${API_BASE_URL}/api/v1/runs/${runId}`, { headers: headers() });
     if (!res.ok) throw new Error(`Failed to fetch run: ${res.status}`);
     const data = await res.json();
     return mapRunFromApi(data);
   },
 
   async getEvents(runId: string): Promise<AgentEvent[]> {
-    const res = await fetch(`${API_BASE_URL}/api/v1/runs/${runId}/events`);
+    const res = await fetch(`${API_BASE_URL}/api/v1/runs/${runId}/events`, { headers: headers() });
     if (!res.ok) throw new Error(`Failed to fetch events: ${res.status}`);
     const data = await res.json();
     return data.map(mapEventFromApi);
@@ -75,7 +89,7 @@ export const api = {
   async createRun(name: string): Promise<RunSummary> {
     const res = await fetch(`${API_BASE_URL}/api/v1/runs/`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: headers(),
       body: JSON.stringify({ name, status: 'running' }),
     });
     if (!res.ok) throw new Error(`Failed to create run: ${res.status}`);
@@ -86,7 +100,7 @@ export const api = {
   async createEvent(runId: string, event: Omit<AgentEvent, 'id'>): Promise<AgentEvent> {
     const res = await fetch(`${API_BASE_URL}/api/v1/runs/${runId}/events`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: headers(),
       body: JSON.stringify({
         run_id: runId,
         agent_id: event.agentId,
@@ -104,7 +118,7 @@ export const api = {
   },
 
   async getStateDiffs(runId: string): Promise<StateDiffEntry[]> {
-    const res = await fetch(`${API_BASE_URL}/api/v1/runs/${runId}/diffs`);
+    const res = await fetch(`${API_BASE_URL}/api/v1/runs/${runId}/diffs`, { headers: headers() });
     if (!res.ok) throw new Error(`Failed to fetch state diffs: ${res.status}`);
     const data = await res.json();
     return data.map((entry: any) => ({
@@ -122,7 +136,7 @@ export const api = {
   async saveStateDiffs(runId: string, diffs: StateDiffInput[]): Promise<{ saved: number; run_id: string }> {
     const res = await fetch(`${API_BASE_URL}/api/v1/runs/${runId}/diffs`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: headers(),
       body: JSON.stringify(diffs.map(d => ({
         path: d.path,
         before: d.before,
@@ -134,7 +148,7 @@ export const api = {
   },
 
   async getReplayEvents(runId: string): Promise<ReplayEvent[]> {
-    const res = await fetch(`${API_BASE_URL}/api/v1/runs/${runId}/replay`);
+    const res = await fetch(`${API_BASE_URL}/api/v1/runs/${runId}/replay`, { headers: headers() });
     if (!res.ok) throw new Error(`Failed to fetch replay events: ${res.status}`);
     const data = await res.json();
     return data.map((e: any) => ({
@@ -153,7 +167,7 @@ export const api = {
   },
 
   async compareRuns(runIdA: string, runIdB: string): Promise<DeterminismResult> {
-    const res = await fetch(`${API_BASE_URL}/api/v1/runs/${runIdA}/compare/${runIdB}`);
+    const res = await fetch(`${API_BASE_URL}/api/v1/runs/${runIdA}/compare/${runIdB}`, { headers: headers() });
     if (!res.ok) throw new Error(`Failed to compare runs: ${res.status}`);
     return res.json();
   },
@@ -161,7 +175,7 @@ export const api = {
   async runRegressionTest(test: RegressionTestInput): Promise<RegressionTestResult> {
     const res = await fetch(`${API_BASE_URL}/api/v1/regression/test`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: headers(),
       body: JSON.stringify(test),
     });
     if (!res.ok) throw new Error(`Failed to run regression test: ${res.status}`);
@@ -169,13 +183,13 @@ export const api = {
   },
 
   async listRegressionTests(): Promise<RegressionTestResult[]> {
-    const res = await fetch(`${API_BASE_URL}/api/v1/regression/tests`);
+    const res = await fetch(`${API_BASE_URL}/api/v1/regression/tests`, { headers: headers() });
     if (!res.ok) throw new Error(`Failed to list regression tests: ${res.status}`);
     return res.json();
   },
 
   async analyzeBloat(runId: string): Promise<BloatAnalysis> {
-    const res = await fetch(`${API_BASE_URL}/api/v1/runs/${runId}/bloat`);
+    const res = await fetch(`${API_BASE_URL}/api/v1/runs/${runId}/bloat`, { headers: headers() });
     if (!res.ok) throw new Error(`Failed to analyze bloat: ${res.status}`);
     return res.json();
   },
@@ -183,7 +197,7 @@ export const api = {
   async exportSession(runId: string, includeEvents: boolean, includeDiffs: boolean, description?: string): Promise<{ share_token: string; share_url: string; run_id: string; exported_at: string; total_events: number; total_diffs: number }> {
     const res = await fetch(`${API_BASE_URL}/api/v1/export/session`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: headers(),
       body: JSON.stringify({ run_id: runId, include_events: includeEvents, include_diffs: includeDiffs, description }),
     });
     if (!res.ok) throw new Error(`Failed to export session: ${res.status}`);
@@ -191,14 +205,56 @@ export const api = {
   },
 
   async getExportedSession(shareToken: string): Promise<any> {
-    const res = await fetch(`${API_BASE_URL}/api/v1/export/session/${shareToken}`);
+    const res = await fetch(`${API_BASE_URL}/api/v1/export/session/${shareToken}`, { headers: headers() });
     if (!res.ok) throw new Error(`Failed to get exported session: ${res.status}`);
     return res.json();
   },
 
   async listExportedSessions(): Promise<any[]> {
-    const res = await fetch(`${API_BASE_URL}/api/v1/export/sessions`);
+    const res = await fetch(`${API_BASE_URL}/api/v1/export/sessions`, { headers: headers() });
     if (!res.ok) throw new Error(`Failed to list exported sessions: ${res.status}`);
+    return res.json();
+  },
+
+  // Auth endpoints
+  async register(email: string, password: string, name?: string): Promise<{ access_token: string; user_id: string; email: string; name?: string }> {
+    const res = await fetch(`${API_BASE_URL}/api/v1/auth/register`, {
+      method: 'POST',
+      headers: headers(),
+      body: JSON.stringify({ email, password, name }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `Registration failed: ${res.status}`);
+    }
+    return res.json();
+  },
+
+  async login(email: string, password: string): Promise<{ access_token: string; user_id: string; email: string; name?: string }> {
+    const res = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
+      method: 'POST',
+      headers: headers(),
+      body: JSON.stringify({ email, password }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `Login failed: ${res.status}`);
+    }
+    return res.json();
+  },
+
+  async logout(): Promise<{ message: string }> {
+    const res = await fetch(`${API_BASE_URL}/api/v1/auth/logout`, {
+      method: 'POST',
+      headers: headers(),
+    });
+    if (!res.ok) throw new Error(`Logout failed: ${res.status}`);
+    return res.json();
+  },
+
+  async getCurrentUser(): Promise<{ id: string; email: string; name?: string; created_at: string }> {
+    const res = await fetch(`${API_BASE_URL}/api/v1/auth/me`, { headers: headers() });
+    if (!res.ok) throw new Error(`Failed to get user: ${res.status}`);
     return res.json();
   },
 };
@@ -289,4 +345,11 @@ export interface BloatAnalysis {
   patterns: BloatPattern[];
   suggestions: string[];
   component_breakdown: Record<string, number>;
+}
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  name?: string;
+  created_at: string;
 }

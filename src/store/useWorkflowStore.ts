@@ -10,8 +10,13 @@ type WorkflowStore = {
   selectedEventId: string | null;
   loading: boolean;
   error: string | null;
-  loopsDetected: string[]; // event IDs flagged as loops
-  deterministic: boolean; // last compared run determinism result
+  loopsDetected: string[];
+  deterministic: boolean;
+
+  // Auth state
+  authToken: string | null;
+  authUser: { id: string; email: string; name?: string; created_at: string } | null;
+  isAuthenticated: boolean;
 
   // Actions
   setRuns: (runs: WorkflowRun[]) => void;
@@ -25,6 +30,8 @@ type WorkflowStore = {
   setError: (error: string | null) => void;
   setLoopsDetected: (eventIds: string[]) => void;
   setDeterministic: (value: boolean) => void;
+  setAuth: (token: string, user: { id: string; email: string; name?: string; created_at: string }) => void;
+  clearAuth: () => void;
   clearStore: () => void;
 
   // Selectors / derived
@@ -45,6 +52,10 @@ export const useWorkflowStore = create<WorkflowStore>()(
       loopsDetected: [],
       deterministic: true,
 
+      authToken: null,
+      authUser: null,
+      isAuthenticated: false,
+
       setRuns: (runs) => set({ runs }),
       addRun: (run) =>
         set((state) => ({ runs: [run, ...state.runs] })),
@@ -63,6 +74,10 @@ export const useWorkflowStore = create<WorkflowStore>()(
       setError: (error) => set({ error }),
       setLoopsDetected: (eventIds) => set({ loopsDetected: eventIds }),
       setDeterministic: (value) => set({ deterministic: value }),
+      setAuth: (token, user) =>
+        set({ authToken: token, authUser: user, isAuthenticated: true }),
+      clearAuth: () =>
+        set({ authToken: null, authUser: null, isAuthenticated: false }),
       clearStore: () =>
         set({
           runs: [],
@@ -73,6 +88,9 @@ export const useWorkflowStore = create<WorkflowStore>()(
           error: null,
           loopsDetected: [],
           deterministic: true,
+          authToken: null,
+          authUser: null,
+          isAuthenticated: false,
         }),
 
       getEventsForRun: (runId) =>
@@ -88,6 +106,9 @@ export const useWorkflowStore = create<WorkflowStore>()(
         runs: state.runs,
         loopsDetected: state.loopsDetected,
         deterministic: state.deterministic,
+        authToken: state.authToken,
+        authUser: state.authUser,
+        isAuthenticated: state.isAuthenticated,
       }),
     }
   )

@@ -13,6 +13,9 @@ export type RootStackParamList = {
   Regression: undefined;
   Bloat: { runId: string };
   Export: { runId: string };
+  Login: undefined;
+  Signup: undefined;
+  AuthLoading: undefined;
 };
 
 export type DashboardScreenProps = NativeStackScreenProps<
@@ -62,4 +65,16 @@ export type BloatScreenProps = NativeStackScreenProps<
 export type ExportScreenProps = NativeStackScreenProps<
   RootStackParamList,
   'Export'
+>;
+export type LoginScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  'Login'
+>;
+export type SignupScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  'Signup'
+>;
+export type AuthLoadingScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  'AuthLoading'
 >;

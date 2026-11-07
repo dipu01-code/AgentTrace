@@ -7,6 +7,7 @@ from app.api.v1.endpoints.determinism import router as determinism_router
 from app.api.v1.endpoints.regression import router as regression_router
 from app.api.v1.endpoints.bloat import router as bloat_router
 from app.api.v1.endpoints.export import router as export_router
+from app.api.v1.endpoints.auth import router as auth_router
 
 api_router = APIRouter()
 
@@ -18,3 +19,4 @@ api_router.include_router(determinism_router, prefix="/runs", tags=["determinism
 api_router.include_router(regression_router, prefix="", tags=["regression"])
 api_router.include_router(bloat_router, prefix="/runs", tags=["bloat"])
 api_router.include_router(export_router, prefix="", tags=["export"])
+api_router.include_router(auth_router, prefix="", tags=["auth"])
