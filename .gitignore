@@ -19,6 +19,7 @@ __pycache__/
 *.pyc
 *.pyo
 .env
+.venv/
 
 # Graphify (local knowledge graph outputs - not for commit)
 graphify-out/
