@@ -5,7 +5,7 @@ import { AnimatedRunCard } from '../components/AnimatedRunCard';
 type Props = {
   runs: RunSummary[];
   onRefresh: () => void;
-  refreshing: boolean;
+  refreshing?: boolean;
   onRunPress: (runId: string) => void;
   onCreatePress: () => void;
 };
@@ -24,7 +24,7 @@ export function TimelineList({ runs, onRefresh, refreshing, onRunPress, onCreate
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         refreshControl={
-          refreshing ? <ActivityIndicator style={styles.refreshIndicator} /> : undefined
+          (refreshing ?? false) ? <ActivityIndicator style={styles.refreshIndicator} /> : undefined
         }
         onRefresh={onRefresh}
         ListEmptyComponent={
