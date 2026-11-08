@@ -1,4 +1,5 @@
 import { NavigationContainer } from '@react-navigation/native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { DashboardScreen } from '../screens/DashboardScreen';
 import { TimelineScreen } from '../screens/TimelineScreen';
 import { RunDetailScreen } from '../screens/RunDetailScreen';
@@ -22,8 +23,9 @@ export function AppNavigator() {
   const { isAuthenticated } = useWorkflowStore();
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <NavigationContainer>
+        <Stack.Navigator
       initialRouteName={isAuthenticated ? 'Timeline' : 'Login'}
       screenOptions={{
         headerStyle: { backgroundColor: '#111827' },
@@ -110,6 +112,7 @@ export function AppNavigator() {
       )}
       </Stack.Navigator>
     </NavigationContainer>
+    </GestureHandlerRootView>
   );
 }
 
