@@ -23,6 +23,7 @@ export function TimelineList({ runs, onRefresh, refreshing, onRunPress, onCreate
         data={runs}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
+        refreshing={refreshing ?? false}
         refreshControl={
           (refreshing ?? false) ? <ActivityIndicator style={styles.refreshIndicator} /> : undefined
         }
