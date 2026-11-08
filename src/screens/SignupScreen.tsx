@@ -46,7 +46,7 @@ export function SignupScreen() {
         name: result.name,
         created_at: new Date().toISOString(),
       });
-      navigation.replace('Timeline' as any);
+      // Navigator re-renders via Zustand isAuthenticated state change
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Signup failed');
     } finally {
