@@ -257,6 +257,29 @@ export const api = {
     if (!res.ok) throw new Error(`Failed to get user: ${res.status}`);
     return res.json();
   },
+
+  // Sync endpoints
+  async syncRun(runId: string, includeEvents: boolean, includeDiffs: boolean, clientChanges?: any[]): Promise<{ sync_id: string; run_id: string; server_timestamp: string; server_events_count: number; server_diffs_count: number; conflicts: any[]; merged_changes: any[]; status: string }> {
+    const res = await fetch(`${API_BASE_URL}/api/v1/sync/run`, {
+      method: 'POST',
+      headers: headers(),
+      body: JSON.stringify({ run_id: runId, include_events: includeEvents, include_diffs: includeDiffs, client_changes: clientChanges }),
+    });
+    if (!res.ok) throw new Error(`Failed to sync run: ${res.status}`);
+    return res.json();
+  },
+
+  async getSyncStatus(): Promise<{ last_sync: string | null; pending_changes: number; total_synced_runs: number; status: string }> {
+    const res = await fetch(`${API_BASE_URL}/api/v1/sync/status`, { headers: headers() });
+    if (!res.ok) throw new Error(`Failed to get sync status: ${res.status}`);
+    return res.json();
+  },
+
+  async listSyncSessions(): Promise<any[]> {
+    const res = await fetch(`${API_BASE_URL}/api/v1/sync/sessions`, { headers: headers() });
+    if (!res.ok) throw new Error(`Failed to list sync sessions: ${res.status}`);
+    return res.json();
+  },
 };
 
 export interface StateDiffInput {

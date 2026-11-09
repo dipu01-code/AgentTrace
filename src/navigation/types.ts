@@ -16,6 +16,7 @@ export type RootStackParamList = {
   Login: undefined;
   Signup: undefined;
   AuthLoading: undefined;
+  Sync: undefined;
 };
 
 export type DashboardScreenProps = NativeStackScreenProps<
@@ -77,4 +78,8 @@ export type SignupScreenProps = NativeStackScreenProps<
 export type AuthLoadingScreenProps = NativeStackScreenProps<
   RootStackParamList,
   'AuthLoading'
+>;
+export type SyncScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  'Sync'
 >;

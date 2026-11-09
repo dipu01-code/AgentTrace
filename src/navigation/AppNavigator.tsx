@@ -12,6 +12,7 @@ import { DeterminismScreen } from '../screens/DeterminismScreen';
 import { RegressionScreen } from '../screens/RegressionScreen';
 import { BloatScreen } from '../screens/BloatScreen';
 import { ExportScreen } from '../screens/ExportScreen';
+import { SyncScreen } from '../screens/SyncScreen';
 import { LoginScreen } from '../screens/LoginScreen';
 import { SignupScreen } from '../screens/SignupScreen';
 import { useWorkflowStore } from '../store/useWorkflowStore';
@@ -107,6 +108,11 @@ export function AppNavigator() {
             name="Export"
             component={ExportScreen}
             options={{ title: 'Export / Share' }}
+          />
+          <Stack.Screen
+            name="Sync"
+            component={SyncScreen}
+            options={{ title: 'Cloud Sync' }}
           />
         </>
       )}
