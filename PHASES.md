@@ -21,8 +21,8 @@
 | 17 | Export / share debug sessions | ✅ Complete |
 | 18 | Auth (login/signup) | ✅ Complete |
 | 19 | Cloud sync | ✅ Complete |
-| 20 | Push notifications for stuck workflows | ⏳ Pending |
-| 21 | Dark mode + theming | ⏳ Pending |
-| 22 | Performance optimization (FlatList, memo) | ⏳ Pending |
-| 23 | E2E tests (Detox) | ⏳ Pending |
-| 24 | EAS build & deployment | ⏳ Pending |
+| 20 | Push notifications for stuck workflows | ✅ Complete |
+| 21 | Dark mode + theming | ✅ Complete |
+| 22 | Performance optimization (FlatList, memo) | ✅ Complete |
+| 23 | E2E tests (Detox) | ✅ Complete |
+| 24 | EAS build & deployment | ✅ Complete |

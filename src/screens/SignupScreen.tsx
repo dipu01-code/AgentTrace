@@ -8,9 +8,11 @@ import {
   TextInput,
   Alert,
 } from 'react-native';
+import { useAppScheme } from '../theme/useAppScheme';
+import { MD3_COLORS, themed } from '../theme/colors';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { api, setAuthToken } from '../services/api';
+import { api } from '../services/api';
 import SafeAreaView from '../components/SafeAreaView';
 import { useWorkflowStore } from '../store/useWorkflowStore';
 import { RootStackParamList } from '../navigation/types';
@@ -18,6 +20,7 @@ import { RootStackParamList } from '../navigation/types';
 type NavProp = NativeStackNavigationProp<RootStackParamList>;
 
 export function SignupScreen() {
+  useAppScheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -39,12 +42,11 @@ export function SignupScreen() {
     setError(null);
     try {
       const result = await api.register(email, password, name || undefined);
-      setAuthToken(result.access_token);
       setAuth(result.access_token, {
         id: result.user_id,
         email: result.email,
         name: result.name,
-        created_at: new Date().toISOString(),
+        created_at: result.created_at,
       });
       // Navigator re-renders via Zustand isAuthenticated state change
     } catch (err) {
@@ -57,7 +59,7 @@ export function SignupScreen() {
   if (loading) {
     return (
       <SafeAreaView style={styles.centerContainer}>
-        <ActivityIndicator size="large" color="#111827" />
+        <ActivityIndicator size="large" color={MD3_COLORS.onSurface} />
       </SafeAreaView>
     );
   }
@@ -71,20 +73,27 @@ export function SignupScreen() {
         <TextInput
           style={styles.input}
           placeholder="Full name"
+          testID="signup-name"
+          placeholderTextColor={MD3_COLORS.textSubtle}
           value={name}
           onChangeText={setName}
         />
         <TextInput
           style={styles.input}
           placeholder="Email"
+          testID="signup-email"
+          placeholderTextColor={MD3_COLORS.textSubtle}
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
+          autoCorrect={false}
           keyboardType="email-address"
         />
         <TextInput
           style={styles.input}
           placeholder="Password"
+          testID="signup-password"
+          placeholderTextColor={MD3_COLORS.textSubtle}
           value={password}
           onChangeText={setPassword}
           secureTextEntry
@@ -96,7 +105,7 @@ export function SignupScreen() {
           </View>
         )}
 
-        <TouchableOpacity style={styles.button} onPress={handleSignup}>
+        <TouchableOpacity style={styles.button} onPress={handleSignup} testID="signup-submit">
           <Text style={styles.buttonText}>{loading ? 'Creating…' : 'Create account'}</Text>
         </TouchableOpacity>
 
@@ -104,7 +113,7 @@ export function SignupScreen() {
           <Text style={styles.dividerText}>Or</Text>
         </View>
 
-        <TouchableOpacity style={styles.linkButton} onPress={() => navigation.navigate('Login' as any)}>
+        <TouchableOpacity style={styles.linkButton} onPress={() => navigation.navigate('Login')}>
           <Text style={styles.linkText}>Already have an account? Sign in</Text>
         </TouchableOpacity>
       </View>
@@ -112,16 +121,16 @@ export function SignupScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f9fafb' },
+const styles = themed(() => StyleSheet.create({
+  container: { flex: 1, backgroundColor: MD3_COLORS.background },
   centerContainer: {
     flex: 1,
-    backgroundColor: '#f9fafb',
+    backgroundColor: MD3_COLORS.background,
     alignItems: 'center',
     justifyContent: 'center',
   },
   card: {
-    backgroundColor: '#ffffff',
+    backgroundColor: MD3_COLORS.surfaceContainerLow,
     borderRadius: 16,
     marginHorizontal: 24,
     padding: 24,
@@ -131,21 +140,21 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 4,
   },
-  title: { fontSize: 26, fontWeight: '800', color: '#111827', textAlign: 'center', marginBottom: 6 },
-  subtitle: { fontSize: 15, color: '#6b7280', textAlign: 'center', marginBottom: 24 },
+  title: { fontSize: 26, fontWeight: '800', color: MD3_COLORS.onSurface, textAlign: 'center', marginBottom: 6 },
+  subtitle: { fontSize: 15, color: MD3_COLORS.textMuted, textAlign: 'center', marginBottom: 24 },
   input: {
-    backgroundColor: '#f3f4f6',
+    backgroundColor: MD3_COLORS.surfaceContainer,
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 14,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: MD3_COLORS.outlineVariant,
     fontSize: 15,
-    color: '#111827',
+    color: MD3_COLORS.onSurface,
     marginBottom: 12,
   },
   errorBanner: {
-    backgroundColor: '#fef2f2',
+    backgroundColor: MD3_COLORS.dangerContainer,
     borderLeftWidth: 4,
     borderLeftColor: '#dc2626',
     padding: 10,
@@ -163,10 +172,11 @@ const styles = StyleSheet.create({
   buttonText: { color: '#ffffff', fontWeight: '700', fontSize: 16 },
   divider: {
     flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
     marginVertical: 12,
   },
-  dividerText: { fontSize: 12, color: '#9ca3af', marginHorizontal: 8 },
+  dividerText: { fontSize: 12, color: MD3_COLORS.textSubtle, marginHorizontal: 8 },
   linkButton: { alignItems: 'center', marginBottom: 12 },
   linkText: { fontSize: 15, color: '#3b82f6', fontWeight: '600' },
-});
+}));

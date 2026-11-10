@@ -1,7 +1,8 @@
-from fastapi import APIRouter, HTTPException, status
-from typing import List, Dict, Any, Tuple
+from fastapi import APIRouter, Depends, HTTPException
+from typing import List, Dict, Any
 from collections import Counter, defaultdict
 import json
+from app.api.v1.endpoints.auth import require_auth
 from app.crud.workflow import get_agent_events_for_run
 
 router = APIRouter()
@@ -21,8 +22,6 @@ def _analyze_bloat(events: List[Dict[str, Any]]) -> Dict[str, Any]:
     - Rapid-fire LLM calls from same agent
     - Event sequences that could be condensed
     """
-    import json
-
     total_events = len(events)
     if total_events == 0:
         return {
@@ -35,6 +34,7 @@ def _analyze_bloat(events: List[Dict[str, Any]]) -> Dict[str, Any]:
             "condensable_sequences": 0,
             "patterns": [],
             "suggestions": [],
+            "component_breakdown": {},
         }
 
     # Count event keys for repetition detection
@@ -135,6 +135,7 @@ def _analyze_bloat(events: List[Dict[str, Any]]) -> Dict[str, Any]:
 @router.get(
     "/runs/{run_id}/bloat",
     response_model=Dict[str, Any],
+    dependencies=[Depends(require_auth)],
     summary="Analyze a run for code bloat",
 )
 async def analyze_run_bloat(run_id: str):

@@ -1,0 +1,23 @@
+<!-- AgentTrace mark: three connected agents inside a looping trace (replay / loop detection). -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="trace" gradientUnits="userSpaceOnUse" x1="150" y1="100" x2="880" y2="900">
+      <stop offset="0" stop-color="#22D3EE"/>
+      <stop offset="0.55" stop-color="#A78BFA"/>
+      <stop offset="1" stop-color="#34D399"/>
+    </linearGradient>
+  </defs>
+  <!-- loop: ~300° arc with an arrowhead -->
+  <path d="M 512 172 A 340 340 0 1 1 217.6 342" fill="none" stroke="url(#trace)" stroke-width="56" stroke-linecap="round"/>
+  <polygon points="484,90 484,254 614,172" fill="url(#trace)"/>
+  <!-- agent hand-offs -->
+  <g stroke="#E2E8F0" stroke-width="30" stroke-linecap="round" opacity="0.9">
+    <line x1="512" y1="380" x2="372" y2="622"/>
+    <line x1="512" y1="380" x2="652" y2="622"/>
+    <line x1="372" y1="622" x2="652" y2="622"/>
+  </g>
+  <!-- agents -->
+  <circle cx="512" cy="380" r="78" fill="#22D3EE"/>
+  <circle cx="372" cy="622" r="78" fill="#A78BFA"/>
+  <circle cx="652" cy="622" r="78" fill="#34D399"/>
+</svg>

@@ -1,114 +1,55 @@
-import Animated, {
-  useSharedValue,
-  withTiming,
-  withSpring,
-  useAnimatedStyle,
-} from 'react-native-reanimated';
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-} from 'react-native';
+import { memo } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import Animated, { FadeIn, LinearTransition } from 'react-native-reanimated';
+import type { AgentEvent } from '../services/api';
+import { EVENT_TYPE_COLORS, MD3_COLORS, MONO_FONT, themed } from '../theme/colors';
+import { useAppScheme } from '../theme/useAppScheme';
 
 type Props = {
-  event: any;
+  event: AgentEvent;
   isExpanded: boolean;
-  onToggle: () => void;
+  onToggle: (eventId: string) => void;
+  onOpen: (eventId: string) => void;
 };
 
-/**
- * Expandable event card with animated height.
- * Tapping toggles between collapsed (summary only) and expanded (full payload).
- */
-export function AnimatedEventCard({
-  event,
-  isExpanded,
-  onToggle,
-}: Props) {
-  const height = useSharedValue(isExpanded ? 220 : 96);
-
-  const animatedHeight = useAnimatedStyle(() => ({
-    height: withSpring(height.value, { damping: 20, stiffness: 150 }),
-    opacity: withTiming(1, { duration: 300 }),
-  }));
-
-  const containerStyle: any = {
-    ...styles.container,
-    borderColor: '#e5e7eb',
-  };
-
+/** Event row that animates open to show timing and payload. */
+export const AnimatedEventCard = memo(function AnimatedEventCard({ event, isExpanded, onToggle, onOpen }: Props) {
+  useAppScheme();
+  const color = EVENT_TYPE_COLORS[event.type] ?? MD3_COLORS.outline;
   return (
-    <TouchableOpacity
-      style={containerStyle}
-      onPress={onToggle}
-      activeOpacity={0.95}
-    >
-      <Animated.View style={[styles.inner, animatedHeight]}>
+    <Animated.View layout={LinearTransition.duration(200)} style={[styles.card, { borderLeftColor: color }]}>
+      <Pressable onPress={() => onToggle(event.id)} accessibilityRole="button" testID={`event-${event.id}`}>
         <View style={styles.header}>
-          <Text style={styles.type}>{event.type}</Text>
-          <Text style={styles.agent}>{event.agentName}</Text>
+          <Text style={[styles.type, { color }]}>{event.type}</Text>
+          <Text style={styles.agent} numberOfLines={1}>{event.agentName}</Text>
+          {event.latencyMs != null && <Text style={styles.mono}>{Math.round(event.latencyMs)}ms</Text>}
         </View>
         {isExpanded && (
-          <View style={styles.details}>
-            <Text style={styles.label}>Timestamp</Text>
-            <Text style={styles.value}>
-              {new Date(event.timestamp).toLocaleString()}
-            </Text>
-            {event.latencyMs != null && (
-              <>
-                <Text style={styles.label}>Latency</Text>
-                <Text style={styles.value}>{event.latencyMs} ms</Text>
-              </>
-            )}
-            <Text style={styles.label}>Payload</Text>
-            <Text style={styles.payload}>
-              {typeof event.payload === 'string'
-                ? event.payload
-                : JSON.stringify(event.payload, null, 2)}
-            </Text>
-          </View>
+          <Animated.View entering={FadeIn.duration(200)} style={styles.details}>
+            <Text style={styles.mono}>{new Date(event.timestamp).toLocaleString()}</Text>
+            <Text style={styles.mono} numberOfLines={8}>{JSON.stringify(event.payload, null, 2)}</Text>
+            <Text style={styles.link} onPress={() => onOpen(event.id)}>Open event →</Text>
+          </Animated.View>
         )}
-      </Animated.View>
-    </TouchableOpacity>
+      </Pressable>
+    </Animated.View>
   );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#ffffff',
-    borderRadius: 8,
-    borderWidth: 1,
-    marginHorizontal: 16,
-    marginVertical: 4,
-    overflow: 'hidden',
-  },
-  inner: {
-    backgroundColor: '#fafbfc',
-  },
-  header: {
-    padding: 14,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  type: { fontSize: 13, fontWeight: '700', color: '#374151' },
-  agent: { fontSize: 12, color: '#6b7280' },
-  details: {
-    paddingHorizontal: 14,
-    paddingBottom: 14,
-  },
-  label: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: '#9ca3af',
-    textTransform: 'uppercase',
-    marginTop: 8,
-  },
-  value: { fontSize: 13, color: '#111827', marginBottom: 4 },
-  payload: {
-    fontSize: 12,
-    color: '#4b5563',
-    fontFamily: 'monospace',
-  } as any,
 });
+
+const styles = themed(() =>
+  StyleSheet.create({
+    card: {
+      borderRadius: 10,
+      borderLeftWidth: 4,
+      padding: 12,
+      marginBottom: 8,
+      backgroundColor: MD3_COLORS.surfaceContainerLow,
+    },
+    header: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+    type: { fontSize: 13, fontWeight: '700' },
+    agent: { flex: 1, fontSize: 13, color: MD3_COLORS.onSurface },
+    mono: { fontFamily: MONO_FONT, fontSize: 12, color: MD3_COLORS.onSurfaceVariant },
+    details: { marginTop: 8, gap: 6 },
+    link: { color: MD3_COLORS.primary, fontWeight: '600', fontSize: 13 },
+  })
+);

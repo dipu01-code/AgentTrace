@@ -1,6 +1,10 @@
 from pydantic import BaseModel, Field
-from typing import Optional, List, Dict, Any
+from typing import Optional, Dict, Any, Literal
 from datetime import datetime
+
+from app.schemas.event_validation import ValidatedAgentEvent
+
+RunStatus = Literal["running", "completed", "failed", "looping"]
 
 
 class AgentEventBase(BaseModel):
@@ -14,31 +18,19 @@ class AgentEventBase(BaseModel):
     parent_id: Optional[str] = None
 
 
-class AgentEventCreate(AgentEventBase):
-    pass
-
-
-class AgentEventInDB(AgentEventBase):
-    id: Optional[str] = Field(default=None, alias="_id")
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-
-    model_config = {
-        "populate_by_name": True,
-    }
+class AgentEventCreate(ValidatedAgentEvent):
+    """Ingest body: same rules as /validate, but run_id comes from the URL."""
+    run_id: str = ""
 
 
 class AgentEventOut(AgentEventBase):
     id: str
     created_at: datetime
 
-    model_config = {
-        "from_attributes": True,
-    }
-
 
 class WorkflowRunBase(BaseModel):
-    name: str
-    status: str = "running"
+    name: str = Field(..., min_length=1)
+    status: RunStatus = "running"
     total_events: int = 0
     loop_count: int = 0
     deterministic: bool = True
@@ -48,24 +40,16 @@ class WorkflowRunCreate(WorkflowRunBase):
     pass
 
 
-class WorkflowRunInDB(WorkflowRunBase):
-    id: Optional[str] = Field(default=None, alias="_id")
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
-
-    model_config = {
-        "populate_by_name": True,
-    }
+class WorkflowRunUpdate(BaseModel):
+    name: Optional[str] = Field(None, min_length=1)
+    status: Optional[RunStatus] = None
+    deterministic: Optional[bool] = None
 
 
 class WorkflowRunOut(WorkflowRunBase):
     id: str
     created_at: datetime
     updated_at: datetime
-
-    model_config = {
-        "from_attributes": True,
-    }
 
 
 class StateDiff(BaseModel):

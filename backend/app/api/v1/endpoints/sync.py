@@ -1,27 +1,27 @@
-from fastapi import APIRouter, HTTPException, status
-from typing import List, Dict, Any, Optional
-from pydantic import BaseModel, Field
-from uuid import uuid4
 from datetime import datetime, timezone
+from typing import Any, Dict, List, Optional
+
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel, Field
+
+from app.api.v1.endpoints.auth import require_auth
 from app.crud.workflow import (
-    get_agent_events_for_run,
-    get_workflow_run,
+    create_agent_events,
+    existing_client_ids,
     get_state_diffs_for_run,
-    list_workflow_runs,
+    get_workflow_run,
 )
+from app.db.database import get_database
+from app.models.schemas import AgentEventCreate
+from app.schemas.event_validation import validate_agent_event
 
-router = APIRouter()
-
-# In-memory sync store (Phase 19 — replaced by proper DB in production)
-_sync_sessions: Dict[str, Dict[str, Any]] = {}
+router = APIRouter(dependencies=[Depends(require_auth)])
 
 
 class SyncRequest(BaseModel):
     run_id: str
-    client_timestamp: Optional[str] = None
-    include_events: bool = True
-    include_diffs: bool = True
-    client_changes: Optional[List[Dict[str, Any]]] = None
+    # Raw events recorded on the client. An optional "id" makes re-sending idempotent.
+    client_changes: List[Dict[str, Any]] = Field(default_factory=list, max_length=5000)
 
 
 class SyncResponse(BaseModel):
@@ -30,116 +30,80 @@ class SyncResponse(BaseModel):
     server_timestamp: str
     server_events_count: int
     server_diffs_count: int
-    conflicts: List[Dict[str, Any]]
-    merged_changes: List[Dict[str, Any]]
-    status: str  # 'synced' | 'conflict' | 'error'
+    accepted_count: int
+    conflicts: List[Dict[str, Any]]   # already on the server (same client id): server copy kept
+    rejected: List[Dict[str, Any]]    # failed schema validation
+    status: str                       # 'synced' | 'partial'
 
 
 class SyncStatus(BaseModel):
     last_sync: Optional[str]
     pending_changes: int
     total_synced_runs: int
-    status: str  # 'synced' | 'pending' | 'error'
+    status: str
 
 
-@router.post(
-    "/sync/run",
-    response_model=SyncResponse,
-    summary="Sync a workflow run between client and server",
-)
+@router.post("/sync/run", response_model=SyncResponse, summary="Push client events for a run and get server totals")
 async def sync_run(sync_in: SyncRequest):
-    """Synchronize a workflow run's events and diffs between client and server.
-    
-    Handles conflict detection when client and server have diverged.
-    """
     run = await get_workflow_run(sync_in.run_id)
     if not run:
         raise HTTPException(status_code=404, detail=f"Run {sync_in.run_id} not found")
 
-    server_events = await get_agent_events_for_run(sync_in.run_id)
-    server_diffs = await get_state_diffs_for_run(sync_in.run_id)
+    ids = [str(c["id"]) for c in sync_in.client_changes if c.get("id")]
+    already = await existing_client_ids(sync_in.run_id, ids) if ids else set()
 
-    server_event_count = len(server_events)
-    server_diff_count = len(server_diffs)
+    conflicts, rejected, accepted, accepted_ids = [], [], [], []
+    for index, change in enumerate(sync_in.client_changes):
+        client_id = str(change["id"]) if change.get("id") else None
+        if client_id and (client_id in already or client_id in accepted_ids):
+            conflicts.append({"index": index, "change_id": client_id, "resolution": "server_wins"})
+            continue
+        result = validate_agent_event({**change, "run_id": sync_in.run_id})
+        if not result.valid:
+            rejected.append({"index": index, "change_id": client_id, "errors": result.errors})
+            continue
+        accepted.append(AgentEventCreate(**result.event.model_dump()))
+        accepted_ids.append(client_id)
 
-    conflicts = []
-    merged_changes = []
-
-    # Detect conflicts: if client has changes and server timestamp is newer
-    if sync_in.client_changes:
-        for change in sync_in.client_changes:
-            change_ts = change.get("timestamp", "")
-            if sync_in.client_timestamp and change_ts > sync_in.client_timestamp:
-                conflicts.append({
-                    "run_id": sync_in.run_id,
-                    "change_id": change.get("id", "unknown"),
-                    "client_timestamp": change_ts,
-                    "server_timestamp": sync_in.client_timestamp,
-                    "resolution": "server_wins",
-                })
-            else:
-                merged_changes.append(change)
-
-    sync_id = str(uuid4())
-    server_timestamp = datetime.now(timezone.utc).isoformat()
-
-    _sync_sessions[sync_id] = {
-        "sync_id": sync_id,
+    await create_agent_events(sync_in.run_id, accepted, accepted_ids)
+    now = datetime.now(timezone.utc)
+    refreshed = await get_workflow_run(sync_in.run_id)
+    diffs_count = len(await get_state_diffs_for_run(sync_in.run_id))
+    status = "partial" if rejected else "synced"
+    session = {
         "run_id": sync_in.run_id,
-        "server_timestamp": server_timestamp,
-        "server_events_count": server_event_count,
-        "server_diffs_count": server_diff_count,
+        "created_at": now,
+        "server_events_count": refreshed.total_events,
+        "server_diffs_count": diffs_count,
+        "accepted_count": len(accepted),
         "conflicts": conflicts,
-        "merged_changes": merged_changes,
-        "status": "conflict" if conflicts else "synced",
-        "created_at": server_timestamp,
+        "rejected": rejected,
+        "status": status,
     }
-
-    return SyncResponse(
-        sync_id=sync_id,
-        run_id=sync_in.run_id,
-        server_timestamp=server_timestamp,
-        server_events_count=server_event_count,
-        server_diffs_count=server_diff_count,
-        conflicts=conflicts,
-        merged_changes=merged_changes,
-        status="conflict" if conflicts else "synced",
-    )
+    result = await get_database().sync_sessions.insert_one(session)
+    return SyncResponse(sync_id=str(result.inserted_id), server_timestamp=now.isoformat(),
+                        **{k: v for k, v in session.items() if k != "created_at"})
 
 
-@router.get(
-    "/sync/status",
-    response_model=SyncStatus,
-    summary="Get sync status for all runs",
-)
+@router.get("/sync/status", response_model=SyncStatus, summary="Overall sync status")
 async def get_sync_status():
-    """Return the overall sync status across all workflow runs."""
-    total_runs = len(await list_workflow_runs())
-    total_synced = len(_sync_sessions)
-    pending = sum(1 for s in _sync_sessions.values() if s["status"] == "conflict")
-
-    last_sync = None
-    if _sync_sessions:
-        last_sync = max(s["created_at"] for s in _sync_sessions.values())
-
+    db = get_database()
+    last = await db.sync_sessions.find_one(sort=[("created_at", -1)])
+    synced_runs = len(await db.sync_sessions.distinct("run_id"))
+    pending = await db.sync_sessions.count_documents({"status": "partial"})
     return SyncStatus(
-        last_sync=last_sync,
+        last_sync=last["created_at"].isoformat() if last else None,
         pending_changes=pending,
-        total_synced_runs=total_synced,
+        total_synced_runs=synced_runs,
         status="synced" if pending == 0 else "pending",
     )
 
 
-@router.get(
-    "/sync/sessions",
-    response_model=List[Dict[str, Any]],
-    summary="List all sync sessions",
-)
+@router.get("/sync/sessions", response_model=List[Dict[str, Any]], summary="List sync sessions, newest first")
 async def list_sync_sessions():
-    """List all sync sessions, newest first."""
-    sessions = sorted(
-        _sync_sessions.values(),
-        key=lambda s: s["created_at"],
-        reverse=True,
-    )
-    return sessions
+    cursor = get_database().sync_sessions.find().sort("created_at", -1).limit(100)
+    return [
+        {**{k: v for k, v in doc.items() if k != "_id"}, "sync_id": str(doc["_id"]),
+         "server_timestamp": doc["created_at"].isoformat(), "created_at": doc["created_at"].isoformat()}
+        async for doc in cursor
+    ]

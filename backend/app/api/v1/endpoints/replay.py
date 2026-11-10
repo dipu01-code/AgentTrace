@@ -1,39 +1,20 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from typing import List, Dict, Any
+from app.api.v1.endpoints.auth import require_auth
 from app.crud.workflow import get_agent_events_for_run
 
 router = APIRouter()
 
 
-@router.get(
-    "/runs/{run_id}/replay",
-    response_model=List[Dict[str, Any]],
-    summary="Get events ordered for replay",
-)
+@router.get("/runs/{run_id}/replay", response_model=List[Dict[str, Any]], dependencies=[Depends(require_auth)],
+            summary="Get events ordered for replay")
 async def get_replay_events(run_id: str):
-    """Return all events for a run sorted by timestamp, normalized to start at 0.
-    Used by the replay scrubber to position events on a timeline.
-    """
-    events = await get_agent_events_for_run(run_id)
+    """Events sorted by timestamp with elapsed_ms measured from the first event."""
+    events = await get_agent_events_for_run(run_id)  # already sorted by timestamp
     if not events:
         raise HTTPException(status_code=404, detail="Run not found or has no events")
-
-    # Normalize timestamps so the first event starts at 0
-    base_ts = min(e.timestamp for e in events)
-    replay = []
-    for event in events:
-        replay.append({
-            "id": event.id,
-            "run_id": event.run_id,
-            "agent_id": event.agent_id,
-            "agent_name": event.agent_name,
-            "type": event.type,
-            "timestamp": event.timestamp,
-            "elapsed_ms": (event.timestamp - base_ts) * 1000,
-            "latency_ms": event.latency_ms,
-            "payload": event.payload,
-            "parent_id": event.parent_id,
-            "created_at": event.created_at.isoformat(),
-        })
-    replay.sort(key=lambda e: e["elapsed_ms"])
-    return replay
+    base_ts = events[0].timestamp
+    return [
+        {**e.model_dump(), "elapsed_ms": (e.timestamp - base_ts) * 1000, "created_at": e.created_at.isoformat()}
+        for e in events
+    ]

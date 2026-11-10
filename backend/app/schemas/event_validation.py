@@ -1,5 +1,5 @@
 from typing import Any, Dict, List, Optional, ClassVar
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, Field, field_validator
 from datetime import datetime
 
 
@@ -62,11 +62,12 @@ class ValidatedAgentEvent(BaseModel):
             return {}
         return v
 
-    @model_validator(mode="after")
-    def validate_parent_consistency(self) -> "ValidatedAgentEvent":
-        if self.parent_id and self.parent_id == "":
+    @field_validator("parent_id")
+    @classmethod
+    def validate_parent_id(cls, v: Optional[str]) -> Optional[str]:
+        if v is not None and not v.strip():
             raise ValueError("parent_id cannot be an empty string")
-        return self
+        return v
 
 
 class ValidationResult(BaseModel):

@@ -4,25 +4,31 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
-    "test": "jest"
+    "test": "jest",
+    "e2e:build": "detox build -c ios.sim.release",
+    "e2e:test": "detox test -c ios.sim.release",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "2.2.0",
     "@react-navigation/native": "^7.0.0",
     "@react-navigation/native-stack": "^7.0.0",
     "@types/react": "^19.0.0",
     "expo": "~58.0.0",
+    "expo-device": "~58.0.5",
+    "expo-notifications": "~58.1.8",
     "expo-status-bar": "~58.0.0",
     "lucide-react-native": "^1.0.0",
     "react": "19.3.0",
     "react-native": "0.88.1",
     "react-native-gesture-handler": "~3.3.0",
     "react-native-reanimated": "^4.0.0",
-    "react-native-svg": "^15.0.0",
-    "react-native-safe-area-context": "^4.11.0",
+    "react-native-safe-area-context": "~5.11.1",
     "react-native-screens": "^4.4.0",
+    "react-native-svg": "^15.0.0",
     "react-native-worklets": "0.13.0",
     "typescript": "~6.0.3",
     "zustand": "^4.5.0"
@@ -30,8 +36,18 @@
   "devDependencies": {
     "@babel/core": "^7.26.0",
     "@types/jest": "30.0.0",
+    "detox": "^20.51.4",
     "jest": "~30.5.2",
     "jest-expo": "~58.0.0"
   },
-  "private": true
+  "private": true,
+  "jest": {
+    "preset": "jest-expo",
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/e2e/",
+      "/ios/",
+      "/android/"
+    ]
+  }
 }

@@ -1,51 +1,70 @@
-import { StyleSheet, Text, View } from 'react-native';
-import SafeAreaView from '../components/SafeAreaView';
-import { RouteProp, useRoute } from '@react-navigation/native';
-import { RootStackParamList } from '../navigation/types';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
+import { AgentEvent, api } from '../services/api';
+import { EVENT_TYPE_COLORS, MD3_COLORS } from '../theme/colors';
+import { ui } from '../theme/common';
+import { useAppScheme } from '../theme/useAppScheme';
+import type { ScreenProps } from '../navigation/types';
 
-export function EventDetailScreen() {
-  const route = useRoute<RouteProp<RootStackParamList, 'EventDetail'>>();
+export function EventDetailScreen({ navigation, route }: ScreenProps<'EventDetail'>) {
+  useAppScheme();
   const { runId, eventId } = route.params;
+  const [events, setEvents] = useState<AgentEvent[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    api.getEvents(runId).then(setEvents).catch((e) => setError(e.message));
+  }, [runId]);
+
+  if (error) return <View style={ui.center}><Text style={ui.error}>{error}</Text></View>;
+  if (!events) return <View style={ui.center}><ActivityIndicator color={MD3_COLORS.primary} /></View>;
+
+  const event = events.find((e) => e.id === eventId);
+  if (!event) return <View style={ui.center}><Text style={ui.muted}>Event not found</Text></View>;
+  const parent = event.parentId ? events.find((e) => e.id === event.parentId) : undefined;
+  const children = events.filter((e) => e.parentId === event.id);
+
+  const Field = ({ label, value }: { label: string; value: string }) => (
+    <View>
+      <Text style={ui.label}>{label}</Text>
+      <Text style={ui.body} selectable>{value}</Text>
+    </View>
+  );
+  const link = (e: AgentEvent) => (
+    <Text
+      key={e.id}
+      style={[ui.body, { color: MD3_COLORS.primary }]}
+      onPress={() => navigation.push('EventDetail', { runId, eventId: e.id })}
+    >
+      {e.type} · {e.agentName} →
+    </Text>
+  );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Event Detail</Text>
-        <Text style={styles.subtitle}>Run: {runId} • Event: {eventId}</Text>
+    <ScrollView style={ui.screen} contentContainerStyle={ui.content}>
+      <View style={ui.card}>
+        <Text style={[ui.title, { color: EVENT_TYPE_COLORS[event.type] ?? MD3_COLORS.onSurface }]}>{event.type}</Text>
+        <Field label="Agent" value={`${event.agentName} (${event.agentId})`} />
+        <Field label="Time" value={new Date(event.timestamp).toLocaleString()} />
+        {event.latencyMs != null && <Field label="Latency" value={`${event.latencyMs} ms`} />}
+        <Field label="Event ID" value={event.id} />
       </View>
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Type</Text>
-        <Text style={styles.cardValue}>—</Text>
+      <Text style={ui.sectionTitle}>Payload</Text>
+      <View style={ui.card}>
+        <Text style={ui.mono} selectable>{JSON.stringify(event.payload, null, 2)}</Text>
       </View>
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Agent</Text>
-        <Text style={styles.cardValue}>—</Text>
-      </View>
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Payload</Text>
-        <Text style={styles.cardValue}>{JSON.stringify({})}</Text>
-      </View>
-    </SafeAreaView>
+      {parent && (
+        <>
+          <Text style={ui.sectionTitle}>Parent</Text>
+          <View style={ui.card}>{link(parent)}</View>
+        </>
+      )}
+      {children.length > 0 && (
+        <>
+          <Text style={ui.sectionTitle}>Replies ({children.length})</Text>
+          <View style={ui.card}>{children.map(link)}</View>
+        </>
+      )}
+    </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f9fafb' },
-  header: { paddingHorizontal: 20, paddingTop: 24, paddingBottom: 16 },
-  title: { fontSize: 24, fontWeight: '800', color: '#111827' },
-  subtitle: { fontSize: 14, color: '#6b7280', marginTop: 4 },
-  card: {
-    backgroundColor: '#ffffff',
-    borderRadius: 12,
-    padding: 16,
-    marginHorizontal: 20,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  cardTitle: { fontSize: 14, fontWeight: '600', color: '#9ca3af', textTransform: 'uppercase' },
-  cardValue: { fontSize: 16, color: '#374151', marginTop: 4 },
-});

@@ -1,85 +1,21 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 export type RootStackParamList = {
+  Login: undefined;
+  Signup: undefined;
   Timeline: undefined;
-  Dashboard: undefined;
+  Settings: undefined;
   RunDetail: { runId: string };
   EventDetail: { runId: string; eventId: string };
   GraphView: { runId: string };
   ReplayView: { runId: string };
   LoopDetector: { runId: string };
   StateDiff: { runId: string };
-  Determinism: { runIdA: string; runIdB: string };
-  Regression: undefined;
+  Determinism: { runIdA: string; runIdB?: string };
+  Regression: { baselineRunId?: string } | undefined;
   Bloat: { runId: string };
   Export: { runId: string };
-  Login: undefined;
-  Signup: undefined;
-  AuthLoading: undefined;
-  Sync: undefined;
+  Sync: { runId?: string } | undefined;
 };
 
-export type DashboardScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  'Dashboard'
->;
-export type TimelineScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  'Timeline'
->;
-export type RunDetailScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  'RunDetail'
->;
-export type EventDetailScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  'EventDetail'
->;
-export type GraphViewScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  'GraphView'
->;
-export type ReplayViewScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  'ReplayView'
->;
-export type LoopDetectorScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  'LoopDetector'
->;
-export type StateDiffScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  'StateDiff'
->;
-export type DeterminismScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  'Determinism'
->;
-export type RegressionScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  'Regression'
->;
-export type BloatScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  'Bloat'
->;
-export type ExportScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  'Export'
->;
-export type LoginScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  'Login'
->;
-export type SignupScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  'Signup'
->;
-export type AuthLoadingScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  'AuthLoading'
->;
-export type SyncScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  'Sync'
->;
+export type ScreenProps<T extends keyof RootStackParamList> = NativeStackScreenProps<RootStackParamList, T>;

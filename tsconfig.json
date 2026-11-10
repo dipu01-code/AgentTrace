@@ -22,7 +22,11 @@
   "exclude": [
     "node_modules",
     "babel.config.js",
-    "metro.config.js"
+    "metro.config.js",
+    "e2e",
+    ".detoxrc.js",
+    "ios",
+    "android"
   ],
   "extends": "expo/tsconfig.base"
 }

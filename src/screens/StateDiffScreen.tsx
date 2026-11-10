@@ -3,10 +3,11 @@ import {
   StyleSheet,
   Text,
   View,
-  TouchableOpacity,
   FlatList,
   ActivityIndicator,
 } from 'react-native';
+import { useAppScheme } from '../theme/useAppScheme';
+import { MD3_COLORS, MONO_FONT, themed } from '../theme/colors';
 import SafeAreaView from '../components/SafeAreaView';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/types';
@@ -31,11 +32,12 @@ function formatValue(val: unknown): string {
 
 function diffItemStyle(added: boolean, removed: boolean) {
   return {
-    color: added ? '#10b981' : removed ? '#dc2626' : '#374151',
+    color: added ? '#10b981' : removed ? '#dc2626' : MD3_COLORS.onSurfaceVariant,
   } as any;
 }
 
 export function StateDiffScreen({ route }: Props) {
+  useAppScheme();
   const { runId } = route.params;
   const [entries, setEntries] = useState<StateDiffEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -58,7 +60,7 @@ export function StateDiffScreen({ route }: Props) {
   if (loading) {
     return (
       <SafeAreaView style={styles.centerContainer}>
-        <ActivityIndicator size="large" color="#111827" />
+        <ActivityIndicator size="large" color={MD3_COLORS.onSurface} />
       </SafeAreaView>
     );
   }
@@ -84,9 +86,6 @@ export function StateDiffScreen({ route }: Props) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.back} accessibilityLabel="Back">
-          <Text style={styles.backText}>← Back</Text>
-        </TouchableOpacity>
         <View style={styles.headerContent}>
           <Text style={styles.title}>State Diff Viewer</Text>
           <Text style={styles.subtitle}>Run: {runId}</Text>
@@ -137,11 +136,11 @@ export function StateDiffScreen({ route }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f9fafb' },
+const styles = themed(() => StyleSheet.create({
+  container: { flex: 1, backgroundColor: MD3_COLORS.background },
   centerContainer: {
     flex: 1,
-    backgroundColor: '#f9fafb',
+    backgroundColor: MD3_COLORS.background,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -156,10 +155,10 @@ const styles = StyleSheet.create({
   back: { padding: 8 },
   backText: { fontSize: 16, color: '#3b82f6', fontWeight: '600' },
   headerContent: { flex: 1 },
-  title: { fontSize: 20, fontWeight: '800', color: '#111827' },
-  subtitle: { fontSize: 13, color: '#6b7280' },
+  title: { fontSize: 20, fontWeight: '800', color: MD3_COLORS.onSurface },
+  subtitle: { fontSize: 13, color: MD3_COLORS.textMuted },
   statCard: {
-    backgroundColor: '#ffffff',
+    backgroundColor: MD3_COLORS.surfaceContainerLow,
     borderRadius: 12,
     marginHorizontal: 16,
     marginVertical: 8,
@@ -171,17 +170,17 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
-  statLabel: { fontSize: 12, fontWeight: '600', color: '#9ca3af', textTransform: 'uppercase' },
-  statValue: { fontSize: 32, fontWeight: '800', color: '#111827', marginTop: 6 },
-  statHint: { fontSize: 13, color: '#6b7280', marginTop: 4 },
-  section: { marginHorizontal: 16, marginBottom: 16 },
-  sectionTitle: { fontSize: 14, fontWeight: '700', color: '#374151', marginBottom: 10 },
+  statLabel: { fontSize: 12, fontWeight: '600', color: MD3_COLORS.textSubtle, textTransform: 'uppercase' },
+  statValue: { fontSize: 32, fontWeight: '800', color: MD3_COLORS.onSurface, marginTop: 6 },
+  statHint: { fontSize: 13, color: MD3_COLORS.textMuted, marginTop: 4 },
+  section: { flex: 1, marginHorizontal: 16 },
+  sectionTitle: { fontSize: 14, fontWeight: '700', color: MD3_COLORS.onSurfaceVariant, marginBottom: 10 },
   listContent: { paddingBottom: 16 },
   diffCard: {
-    backgroundColor: '#ffffff',
+    backgroundColor: MD3_COLORS.surfaceContainerLow,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: MD3_COLORS.outlineVariant,
     padding: 14,
     marginBottom: 10,
     shadowColor: '#000',
@@ -196,7 +195,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 10,
   },
-  diffPath: { fontSize: 13, fontWeight: '700', color: '#111827' },
+  diffPath: { fontSize: 13, fontWeight: '700', color: MD3_COLORS.onSurface },
   diffValues: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -212,21 +211,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     alignItems: 'center',
   },
-  arrowText: { fontSize: 18, color: '#9ca3af', fontWeight: '700' },
+  arrowText: { fontSize: 18, color: MD3_COLORS.textSubtle, fontWeight: '700' },
   sideLabel: {
     fontSize: 11,
     fontWeight: '600',
-    color: '#9ca3af',
+    color: MD3_COLORS.textSubtle,
     textTransform: 'uppercase',
     marginBottom: 4,
   },
   sideValue: {
     fontSize: 13,
-    fontFamily: 'monospace',
+    fontFamily: MONO_FONT,
     lineHeight: 20,
   },
   errorText: { fontSize: 16, fontWeight: '600', color: '#dc2626' },
-  errorHint: { fontSize: 13, color: '#6b7280', marginTop: 6 },
-  emptyTitle: { fontSize: 18, fontWeight: '700', color: '#374151' },
-  emptyHint: { fontSize: 14, color: '#6b7280', marginTop: 8 },
-});
+  errorHint: { fontSize: 13, color: MD3_COLORS.textMuted, marginTop: 6 },
+  emptyTitle: { fontSize: 18, fontWeight: '700', color: MD3_COLORS.onSurfaceVariant },
+  emptyHint: { fontSize: 14, color: MD3_COLORS.textMuted, marginTop: 8 },
+}));

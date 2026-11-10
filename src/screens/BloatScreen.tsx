@@ -5,8 +5,10 @@ import {
   View,
   TouchableOpacity,
   ActivityIndicator,
-  FlatList,
+  ScrollView,
 } from 'react-native';
+import { useAppScheme } from '../theme/useAppScheme';
+import { MD3_COLORS, themed } from '../theme/colors';
 import SafeAreaView from '../components/SafeAreaView';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/types';
@@ -20,10 +22,11 @@ function scoreColor(score: number): string {
   if (score <= 25) return '#10b981';
   if (score <= 50) return '#f59e0b';
   if (score <= 75) return '#ef4444';
-  return '#7f1d1d';
+  return MD3_COLORS.onDangerContainer;
 }
 
 export function BloatScreen({ route }: Props) {
+  useAppScheme();
   const { runId } = route.params;
   const [analysis, setAnalysis] = useState<BloatAnalysis | null>(null);
   const [loading, setLoading] = useState(true);
@@ -54,7 +57,7 @@ export function BloatScreen({ route }: Props) {
   if (loading) {
     return (
       <SafeAreaView style={styles.centerContainer}>
-        <ActivityIndicator size="large" color="#111827" />
+        <ActivityIndicator size="large" color={MD3_COLORS.onSurface} />
       </SafeAreaView>
     );
   }
@@ -76,7 +79,7 @@ export function BloatScreen({ route }: Props) {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 32 }}>
       <View style={styles.header}>
         <Text style={styles.title}>Code Bloat Analyzer</Text>
         <Text style={styles.subtitle}>Run: {analysis.run_id}</Text>
@@ -115,7 +118,7 @@ export function BloatScreen({ route }: Props) {
           </View>
           <View style={styles.breakdownItem}>
             <Text style={styles.breakdownValue}>{analysis.condensable_sequences}</Text>
-            <Text style={styles.breakdownLabel}>Condensable sequences</Text>
+            <Text style={styles.breakdownLabel}>Mergeable sequences</Text>
           </View>
         </View>
       </View>
@@ -132,11 +135,8 @@ export function BloatScreen({ route }: Props) {
       {analysis.patterns.length > 0 && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Patterns Detected ({analysis.patterns.length})</Text>
-          <FlatList
-            data={analysis.patterns}
-            keyExtractor={(_, index) => String(index)}
-            renderItem={({ item }) => (
-              <View style={styles.patternCard}>
+          {analysis.patterns.map((item, index) => (
+              <View key={index} style={styles.patternCard}>
                 <View style={styles.patternHeader}>
                   <Text style={styles.patternType}>{item.type}</Text>
                   <Text style={styles.patternCount}>×{item.count}</Text>
@@ -148,40 +148,33 @@ export function BloatScreen({ route }: Props) {
                   <Text style={styles.patternMetaText}>Excess: {item.excess}</Text>
                 </View>
               </View>
-            )}
-            contentContainerStyle={styles.listContent}
-          />
+            ))}
         </View>
       )}
 
       {/* Suggestions */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Suggestions ({analysis.suggestions.length})</Text>
-        <FlatList
-          data={analysis.suggestions}
-          keyExtractor={(_, index) => String(index)}
-          renderItem={({ item }) => (
-            <View style={styles.suggestionCard}>
+        {analysis.suggestions.map((item, index) => (
+            <View key={index} style={styles.suggestionCard}>
               <Text style={styles.suggestionText}>{item}</Text>
             </View>
-          )}
-          contentContainerStyle={styles.listContent}
-        />
+          ))}
       </View>
 
       {/* Refresh */}
       <TouchableOpacity style={styles.refreshButton} onPress={handleRefresh}>
         <Text style={styles.refreshText}>🔄 Re-analyze</Text>
       </TouchableOpacity>
-    </SafeAreaView>
+    </ScrollView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f9fafb' },
+const styles = themed(() => StyleSheet.create({
+  container: { flex: 1, backgroundColor: MD3_COLORS.background },
   centerContainer: {
     flex: 1,
-    backgroundColor: '#f9fafb',
+    backgroundColor: MD3_COLORS.background,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -190,10 +183,10 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingBottom: 12,
   },
-  title: { fontSize: 22, fontWeight: '800', color: '#111827' },
-  subtitle: { fontSize: 14, color: '#6b7280', marginTop: 4 },
+  title: { fontSize: 22, fontWeight: '800', color: MD3_COLORS.onSurface },
+  subtitle: { fontSize: 14, color: MD3_COLORS.textMuted, marginTop: 4 },
   scoreCard: {
-    backgroundColor: '#ffffff',
+    backgroundColor: MD3_COLORS.surfaceContainerLow,
     borderRadius: 16,
     marginHorizontal: 16,
     marginVertical: 10,
@@ -205,28 +198,28 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  scoreLabel: { fontSize: 13, fontWeight: '600', color: '#9ca3af', textTransform: 'uppercase', marginBottom: 8 },
+  scoreLabel: { fontSize: 13, fontWeight: '600', color: MD3_COLORS.textSubtle, textTransform: 'uppercase', marginBottom: 8 },
   scoreCircle: {
     width: 90,
     height: 90,
     borderRadius: 45,
     borderWidth: 4,
-    borderColor: '#e5e7eb',
+    borderColor: MD3_COLORS.outlineVariant,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 8,
   },
   scoreValue: { fontSize: 32, fontWeight: '900' },
-  scoreVerdict: { fontSize: 15, fontWeight: '700', color: '#374151' },
+  scoreVerdict: { fontSize: 15, fontWeight: '700', color: MD3_COLORS.onSurfaceVariant },
   breakdownSection: { marginHorizontal: 16, marginBottom: 16 },
-  sectionTitle: { fontSize: 14, fontWeight: '700', color: '#374151', marginBottom: 10 },
+  sectionTitle: { fontSize: 14, fontWeight: '700', color: MD3_COLORS.onSurfaceVariant, marginBottom: 10 },
   breakdownRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 10,
   },
   breakdownItem: {
-    backgroundColor: '#ffffff',
+    backgroundColor: MD3_COLORS.surfaceContainerLow,
     borderRadius: 10,
     padding: 12,
     alignItems: 'center',
@@ -237,11 +230,11 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 2,
   },
-  breakdownValue: { fontSize: 24, fontWeight: '800', color: '#111827' },
-  breakdownLabel: { fontSize: 11, color: '#6b7280', textAlign: 'center', marginTop: 4 },
+  breakdownValue: { fontSize: 24, fontWeight: '800', color: MD3_COLORS.onSurface },
+  breakdownLabel: { fontSize: 11, color: MD3_COLORS.textMuted, textAlign: 'center', marginTop: 4 },
   statsRow: { marginHorizontal: 16, marginBottom: 16 },
   statCard: {
-    backgroundColor: '#ffffff',
+    backgroundColor: MD3_COLORS.surfaceContainerLow,
     borderRadius: 10,
     padding: 14,
     shadowColor: '#000',
@@ -250,15 +243,15 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 2,
   },
-  statLabel: { fontSize: 11, fontWeight: '600', color: '#9ca3af', textTransform: 'uppercase' },
-  statValue: { fontSize: 24, fontWeight: '800', color: '#111827', marginTop: 6 },
+  statLabel: { fontSize: 11, fontWeight: '600', color: MD3_COLORS.textSubtle, textTransform: 'uppercase' },
+  statValue: { fontSize: 24, fontWeight: '800', color: MD3_COLORS.onSurface, marginTop: 6 },
   section: { marginHorizontal: 16, marginBottom: 16 },
   listContent: { paddingBottom: 16 },
   patternCard: {
-    backgroundColor: '#ffffff',
+    backgroundColor: MD3_COLORS.surfaceContainerLow,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: MD3_COLORS.outlineVariant,
     padding: 12,
     marginBottom: 8,
     shadowColor: '#000',
@@ -273,9 +266,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 6,
   },
-  patternType: { fontSize: 13, fontWeight: '700', color: '#374151' },
+  patternType: { fontSize: 13, fontWeight: '700', color: MD3_COLORS.onSurfaceVariant },
   patternCount: { fontSize: 12, fontWeight: '600', color: '#dc2626' },
-  patternDescription: { fontSize: 13, color: '#111827', marginBottom: 6 },
+  patternDescription: { fontSize: 13, color: MD3_COLORS.onSurface, marginBottom: 6 },
   patternMeta: {
     flexDirection: 'row',
     gap: 8,
@@ -283,17 +276,17 @@ const styles = StyleSheet.create({
   },
   patternMetaText: {
     fontSize: 11,
-    color: '#6b7280',
-    backgroundColor: '#f3f4f6',
+    color: MD3_COLORS.textMuted,
+    backgroundColor: MD3_COLORS.surfaceContainer,
     borderRadius: 6,
     paddingHorizontal: 6,
     paddingVertical: 2,
   },
   suggestionCard: {
-    backgroundColor: '#ffffff',
+    backgroundColor: MD3_COLORS.surfaceContainerLow,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: MD3_COLORS.outlineVariant,
     padding: 12,
     marginBottom: 8,
     shadowColor: '#000',
@@ -302,7 +295,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 2,
   },
-  suggestionText: { fontSize: 13, color: '#374151', lineHeight: 20 },
+  suggestionText: { fontSize: 13, color: MD3_COLORS.onSurfaceVariant, lineHeight: 20 },
   refreshButton: {
     backgroundColor: '#3b82f6',
     borderRadius: 8,
@@ -321,5 +314,5 @@ const styles = StyleSheet.create({
   },
   retryText: { color: '#ffffff', fontWeight: '600', fontSize: 14 },
   errorText: { fontSize: 16, fontWeight: '600', color: '#dc2626' },
-  errorHint: { fontSize: 13, color: '#6b7280', marginTop: 6 },
-});
+  errorHint: { fontSize: 13, color: MD3_COLORS.textMuted, marginTop: 6 },
+}));

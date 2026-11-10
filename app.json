@@ -2,6 +2,22 @@
   "expo": {
     "name": "AgentTrace",
     "slug": "agenttrace",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "scheme": "agenttrace",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "bundleIdentifier": "com.agenttrace.app",
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSAppTransportSecurity": { "NSAllowsLocalNetworking": true }
+      }
+    },
+    "android": {
+      "package": "com.agenttrace.app"
+    },
+    "plugins": [
+      "expo-notifications"
+    ]
   }
 }

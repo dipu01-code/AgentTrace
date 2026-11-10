@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
-import { MD3_COLORS, MD3_TYPOGRAPHY, MD3_RADIUS } from '../../theme/colors';
+import { MD3_COLORS, MD3_RADIUS, MD3_TYPOGRAPHY, MONO_FONT, themed } from '../../theme/colors';
 
 type AgentButtonProps = {
   onPress: () => void;
@@ -33,7 +33,7 @@ export function AgentButton({
       text: { color: MD3_COLORS.onSurface },
     },
     tonal: {
-      container: { backgroundColor: '#37393f' },
+      container: { backgroundColor: MD3_COLORS.surfaceContainerHigh },
       text: { color: MD3_COLORS.onSurface },
     },
     ghost: {
@@ -56,7 +56,7 @@ export function AgentButton({
         style,
       ]}
     >
-      <Text style={[agentButtonStyles.text, v.text, disabled && { color: '#bbc9cd' }]}>
+      <Text style={[agentButtonStyles.text, v.text, disabled && { color: MD3_COLORS.onSurfaceVariant }]}>
         {title}
       </Text>
     </TouchableOpacity>
@@ -68,11 +68,15 @@ export type ChipProps = {
   selected?: boolean;
   onPress?: () => void;
   leadingIcon?: React.ReactNode;
+  testID?: string;
 };
 
-export function Chip({ label, selected = false, onPress, leadingIcon }: ChipProps) {
+export function Chip({ label, selected = false, onPress, leadingIcon, testID }: ChipProps) {
   return (
     <TouchableOpacity
+      testID={testID}
+      accessibilityRole="button"
+      accessibilityState={{ selected }}
       onPress={onPress}
       activeOpacity={0.8}
       style={[chipStyles.container, selected ? chipStyles.selected : chipStyles.unselected]}
@@ -98,8 +102,9 @@ export function MetricCard({ title, value, subtitle, icon, accentColor = MD3_COL
   return (
     <View style={metricCardStyles.container}>
       <View style={metricCardStyles.topRow}>
-        <View style={[metricCardStyles.leftCol, accentColor && { backgroundColor: accentColor }]}>
+        <View style={metricCardStyles.leftCol}>
           <Text style={metricCardStyles.title}>{title}</Text>
+          <View style={[metricCardStyles.accentDot, { backgroundColor: accentColor }]} />
         </View>
         {icon && <View style={metricCardStyles.iconWrap}>{icon}</View>}
       </View>
@@ -202,7 +207,7 @@ export function SkeletonCard({ height = 120 }: SkeletonCardProps) {
 export type TabBarProps = {
   activeTab: string;
   onTabPress: (tab: string) => void;
-  tabs: { id: string; label: string; icon: React.ReactNode }[];
+  tabs: { id: string; label: string; icon?: React.ReactNode }[];
 };
 
 export function TabBar({ activeTab, onTabPress, tabs }: TabBarProps) {
@@ -212,12 +217,13 @@ export function TabBar({ activeTab, onTabPress, tabs }: TabBarProps) {
         <TouchableOpacity
           key={tab.id}
           onPress={() => onTabPress(tab.id)}
+          testID={`tab-${tab.id}`}
           activeOpacity={0.8}
           style={[tabBarStyles.tab, tab.id === activeTab && tabBarStyles.active]}
         >
-          <View style={[tabBarStyles.icon, tab.id === activeTab && tabBarStyles.activeIcon]}>
-            {tab.icon}
-          </View>
+          {tab.icon ? (
+            <View style={[tabBarStyles.icon, tab.id === activeTab && tabBarStyles.activeIcon]}>{tab.icon}</View>
+          ) : null}
           <Text style={[tabBarStyles.label, tab.id === activeTab && tabBarStyles.activeLabel]}>
             {tab.label}
           </Text>
@@ -241,7 +247,7 @@ export function LoadingCard({ title }: LoadingCardProps) {
 }
 
 // Unique StyleSheet objects per component
-const agentButtonStyles = StyleSheet.create({
+const agentButtonStyles = themed(() => StyleSheet.create({
   container: {
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -255,9 +261,9 @@ const agentButtonStyles = StyleSheet.create({
     fontWeight: MD3_TYPOGRAPHY.labelMd.fontWeight,
     letterSpacing: MD3_TYPOGRAPHY.labelMd.letterSpacing,
   },
-});
+}));
 
-const chipStyles = StyleSheet.create({
+const chipStyles = themed(() => StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -288,19 +294,17 @@ const chipStyles = StyleSheet.create({
   labelUnselected: {
     color: MD3_COLORS.onSurfaceVariant,
   },
-});
+}));
 
-const metricCardStyles = StyleSheet.create({
+const metricCardStyles = themed(() => StyleSheet.create({
   container: {
     backgroundColor: MD3_COLORS.surfaceContainerLow,
     borderRadius: MD3_RADIUS.xl,
-    padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-    minHeight: 104,
+    padding: 12,
+    flexGrow: 1,
+    flexBasis: 70,
+    borderWidth: 1,
+    borderColor: MD3_COLORS.outlineVariant,
   },
   topRow: {
     flexDirection: 'row',
@@ -353,9 +357,9 @@ const metricCardStyles = StyleSheet.create({
     fontSize: MD3_TYPOGRAPHY.codeSm.fontSize,
     color: MD3_COLORS.onSurfaceVariant,
   },
-});
+}));
 
-const stateChipStyles = StyleSheet.create({
+const stateChipStyles = themed(() => StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -373,11 +377,11 @@ const stateChipStyles = StyleSheet.create({
     fontSize: MD3_TYPOGRAPHY.labelSm.fontSize,
     fontWeight: MD3_TYPOGRAPHY.labelSm.fontWeight,
   },
-});
+}));
 
-const payloadBoxStyles = StyleSheet.create({
+const payloadBoxStyles = themed(() => StyleSheet.create({
   container: {
-    backgroundColor: '#0c0e13',
+    backgroundColor: MD3_COLORS.surfaceContainerLowest,
     borderRadius: 8,
     padding: 12,
     borderWidth: 1,
@@ -393,14 +397,14 @@ const payloadBoxStyles = StyleSheet.create({
   },
   content: ( {
     fontSize: MD3_TYPOGRAPHY.codeSm.fontSize,
-    fontFamily: 'monospace',
+    fontFamily: MONO_FONT,
     color: MD3_COLORS.onSurfaceVariant,
     lineHeight: MD3_TYPOGRAPHY.codeSm.lineHeight,
     fontWeight: MD3_TYPOGRAPHY.codeSm.fontWeight,
   } as any),
-});
+}));
 
-const statusBarStyles = StyleSheet.create({
+const statusBarStyles = themed(() => StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -426,9 +430,9 @@ const statusBarStyles = StyleSheet.create({
     fontWeight: '600',
     marginLeft: 8,
   },
-});
+}));
 
-const progressBarStyles = StyleSheet.create({
+const progressBarStyles = themed(() => StyleSheet.create({
   container: {
     width: '100%',
     height: 4,
@@ -440,22 +444,23 @@ const progressBarStyles = StyleSheet.create({
     height: '100%',
     borderRadius: 2,
   },
-});
+}));
 
-const skeletonCardStyles = StyleSheet.create({
+const skeletonCardStyles = themed(() => StyleSheet.create({
   container: {
     backgroundColor: MD3_COLORS.surfaceContainerLow,
     borderRadius: MD3_RADIUS.xl,
   },
-});
+}));
 
-const tabBarStyles = StyleSheet.create({
+const tabBarStyles = themed(() => StyleSheet.create({
   container: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingTop: 6,
     paddingBottom: 6,
-    borderTopWidth: 1,
+    borderWidth: 1,
+    borderRadius: 10,
     borderColor: MD3_COLORS.outlineVariant,
     backgroundColor: MD3_COLORS.surfaceContainerLowest,
   },
@@ -482,9 +487,9 @@ const tabBarStyles = StyleSheet.create({
     color: MD3_COLORS.primary,
     fontWeight: '700',
   },
-});
+}));
 
-const loadingCardStyles = StyleSheet.create({
+const loadingCardStyles = themed(() => StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
@@ -496,7 +501,7 @@ const loadingCardStyles = StyleSheet.create({
     color: MD3_COLORS.onSurfaceVariant,
     marginTop: 12,
   },
-});
+}));
 
 export default {
   AgentButton,
