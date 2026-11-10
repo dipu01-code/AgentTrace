@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { AppState } from 'react-native';
+import { AppState, Platform } from 'react-native';
 import type { NavigationContainerRefWithCurrent } from '@react-navigation/native';
 import Constants from 'expo-constants';
 import * as Device from 'expo-device';
@@ -8,6 +8,8 @@ import { api } from '../services/api';
 import type { RootStackParamList } from '../navigation/types';
 
 const POLL_MS = 60_000;
+// Android 8+ shows a heads-up banner only for HIGH importance channels.
+const CHANNEL_ID = 'stuck-runs';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -73,13 +75,19 @@ export function useStuckRunAlerts(
                 data: { runId: run.id },
               }
             : { title: `${fresh.length} workflows need attention`, body: fresh.map((r) => r.name).slice(0, 3).join(', '), data: {} };
-        await Notifications.scheduleNotificationAsync({ content, trigger: null });
+        await Notifications.scheduleNotificationAsync({ content, trigger: Platform.OS === 'android' ? { channelId: CHANNEL_ID } : null });
       } catch {
         // Offline or signed out; try again next tick.
       }
     };
 
     (async () => {
+      if (Platform.OS === 'android') {
+        await Notifications.setNotificationChannelAsync(CHANNEL_ID, {
+          name: 'Stuck workflows',
+          importance: Notifications.AndroidImportance.HIGH,
+        });
+      }
       const { granted } = await Notifications.requestPermissionsAsync();
       if (!granted || cancelled) return;
       if (await registerForRemotePush()) return; // server will push; no need to poll

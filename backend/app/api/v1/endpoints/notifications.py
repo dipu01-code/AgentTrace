@@ -65,7 +65,8 @@ async def notify_stuck_runs_once() -> int:
             "body": ", ".join(r.name for r in runs[:3]),
             "data": {},
         }
-    messages = [{"to": token, **alert} for token in tokens]
+    # channelId matches the high-importance channel the Android app creates (ignored on iOS).
+    messages = [{"to": token, "channelId": "stuck-runs", "priority": "high", **alert} for token in tokens]
     for start in range(0, len(messages), 100):  # Expo accepts up to 100 per request
         await asyncio.to_thread(_send_expo_push, messages[start:start + 100])
     await mark_runs_notified([r.id for r in runs])

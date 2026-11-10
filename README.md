@@ -1,3 +1,5 @@
+<img src="assets/icon.png" width="96" alt="AgentTrace logo" />
+
 # AgentTrace
 
 Mobile observability debugger for multi-agent AI workflows. Trace, debug, and replay non-deterministic agent runs on your phone.
@@ -52,7 +54,7 @@ API docs: http://localhost:8000/docs · Tests: `python -m pytest` (uses a throwa
 
 ```bash
 npm install
-npx expo run:ios      # or: npx expo run:android
+npx expo run:ios      # or: npx expo run:android  (Android Studio/SDK, JDK 17–21)
 ```
 
 The app finds the backend on the same machine Metro runs on. To point it elsewhere: `EXPO_PUBLIC_API_URL=https://api.example.com npx expo start`.
@@ -84,13 +86,15 @@ npm test                                     # unit tests
 npm run typecheck
 # iOS E2E (needs backend running + `brew tap wix/brew && brew install applesimutils`)
 npm run e2e:build && npm run e2e:test
+# Android E2E (needs backend + Metro (`npx expo start`) running, and an AVD named AgentTrace_API36)
+npm run e2e:build:android && npm run e2e:test:android
 ```
 
 ## Deploy
 
 **Backend:** `JWT_SECRET=$(openssl rand -base64 48) docker compose up --build` runs the API and MongoDB. With `APP_ENV=production` the API refuses to start without a real `JWT_SECRET`.
 
-**App:** `eas init` once to link an Expo project, set `EXPO_PUBLIC_API_URL` per profile in `eas.json`, then `eas build -p ios --profile preview` (or `production`, then `eas submit`). Remote push alerts need the EAS project ID; without it the app falls back to polling while open.
+**App:** see [`PUBLISHING.md`](PUBLISHING.md): APK for testers (`eas build -p android --profile preview`) or AAB for Google Play (`--profile production` + `eas submit`).
 
 ## Status
 

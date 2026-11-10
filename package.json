@@ -10,7 +10,9 @@
     "test": "jest",
     "e2e:build": "detox build -c ios.sim.release",
     "e2e:test": "detox test -c ios.sim.release",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "e2e:build:android": "detox build -c android.emu.debug",
+    "e2e:test:android": "detox test -c android.emu.debug"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",
@@ -20,7 +22,9 @@
     "expo": "~58.0.0",
     "expo-device": "~58.0.5",
     "expo-notifications": "~58.1.8",
+    "expo-splash-screen": "~58.0.13",
     "expo-status-bar": "~58.0.0",
+    "expo-system-ui": "~58.0.7",
     "lucide-react-native": "^1.0.0",
     "react": "19.3.0",
     "react-native": "0.88.1",
@@ -35,6 +39,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
+    "@config-plugins/detox": "^11.0.0",
     "@types/jest": "30.0.0",
     "detox": "^20.51.4",
     "jest": "~30.5.2",
@@ -49,5 +54,10 @@
       "/ios/",
       "/android/"
     ]
+  },
+  "overrides": {
+    "@config-plugins/detox": {
+      "expo": "$expo"
+    }
   }
 }

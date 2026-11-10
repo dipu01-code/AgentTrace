@@ -9,23 +9,39 @@ let runA;
 let runB;
 
 const tapText = (text, index = 0) => element(by.text(text)).atIndex(index).tap();
-// Open screens through real deep links (as if tapped in Safari).
+const isIOS = () => device.getPlatform() === 'ios';
+
+// Open screens through real deep links (as if tapped in a browser).
 const open = async (path) => {
-  execFileSync('xcrun', ['simctl', 'openurl', device.id, `agenttrace://${path}`]);
-  // iOS asks "Open in AgentTrace?" only when the app isn't already in front.
-  await system.element(by.system.label('Open')).tap().catch(() => undefined);
+  const url = `agenttrace://${path}`;
+  if (isIOS()) {
+    execFileSync('xcrun', ['simctl', 'openurl', device.id, url]);
+    // iOS asks "Open in AgentTrace?" only when the app isn't already in front.
+    await system.element(by.system.label('Open')).tap().catch(() => undefined);
+  } else {
+    execFileSync('adb', ['-s', device.id, 'shell', 'am', 'start', '-W', '-a', 'android.intent.action.VIEW', '-d', url, 'com.agenttrace.app']);
+  }
 };
 
 describe('AgentTrace', () => {
   beforeAll(async () => {
     runA = await seedLoopingRun(runAName);
     runB = await seedLoopingRun(runBName);
-    await device.launchApp({ newInstance: true, delete: true, permissions: { notifications: 'YES' } });
+    if (isIOS()) {
+      await device.launchApp({ newInstance: true, delete: true, permissions: { notifications: 'YES' } });
+    } else {
+      // Grant Android 13+ notification permission up front so its dialog doesn't cover the app.
+      await device.uninstallApp();
+      await device.installApp();
+      execFileSync('adb', ['-s', device.id, 'shell', 'pm', 'grant', 'com.agenttrace.app', 'android.permission.POST_NOTIFICATIONS']);
+      await device.launchApp({ newInstance: true });
+    }
   });
 
   it('signs up and lands on the timeline', async () => {
     await waitFor(element(by.id('login-submit'))).toBeVisible().withTimeout(30000);
     await tapText('Create an account');
+    await waitFor(element(by.id('signup-email'))).toBeVisible().withTimeout(10000);
     // replaceText skips the keyboard, so iOS AutoFill suggestions can't cover the button.
     await element(by.id('signup-email')).replaceText(email);
     await element(by.id('signup-password')).replaceText('secret123');

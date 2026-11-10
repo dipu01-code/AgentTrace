@@ -50,12 +50,14 @@ def padded(mark: Image.Image, scale: float) -> Image.Image:
 def main():
     mark = render_transparent(HERE / "logo-mark.svg")
     # iOS rejects icons with transparency, so the full icon is flattened RGB.
-    Image.fromarray(render((HERE / "logo.svg").read_text()).astype(np.uint8), "RGB").save(ASSETS / "icon.png")
+    icon = Image.fromarray(render((HERE / "logo.svg").read_text()).astype(np.uint8), "RGB")
+    icon.save(ASSETS / "icon.png")
+    icon.resize((512, 512), Image.LANCZOS).save(HERE / "play-store-icon-512.png")  # Play Console listing
     # Android adaptive icons crop to the centre ~61%; keep the mark inside it.
     padded(mark, 0.62).save(ASSETS / "adaptive-icon.png")
     mark.save(ASSETS / "splash-icon.png")
     padded(mark, 0.62).resize((48, 48), Image.LANCZOS).save(ASSETS / "favicon.png")
-    print("wrote icon.png, adaptive-icon.png, splash-icon.png, favicon.png")
+    print("wrote icon.png, adaptive-icon.png, splash-icon.png, favicon.png, brand/play-store-icon-512.png")
 
 
 if __name__ == "__main__":
